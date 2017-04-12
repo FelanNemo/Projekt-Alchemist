@@ -17,10 +17,10 @@
 	succsess: function(response){
 		if(response.da){
 			console.log('Weiterspielen darf aktive sein');
-			$('#countinueGame').attr({ 'disabled':'enabeld'});
+			$('#countinueGame').prop('disabled',false);
 		} else{
 		console.log('Weiterspielen muss deaktiviter sein');
-		$('#countinueGame').attr({ 'disabled':'disabled'});
+		$('#countinueGame').prop('disabled',true);
 		}
 	},
 	error: function(response) {

@@ -1,4 +1,18 @@
-{"Gametype":"Standard"[{
-  "Alkohol":["Feuer","Wasser"],
-  "Komination":["Dust","Feuer","Wasser"]
-  }]}
+{"game":[
+  {
+    "gametyp":"standard",
+    "combinations":[
+      {"result":"alkohol","elements":["fire","water"]  },
+      {"result":"fog","elements":["air","water"]  },
+      {"result":"tree","elements":["earth","water"]  },
+    ]
+  },
+  {
+    "gametyp":"technik",
+    "combinations":[
+      {"result":"alkohol","elements":["fire","water"]  },
+      {"result":"fog","elements":["air","water"]  },
+      {"result":"tree","elements":["earth","water"]  },
+    ]
+  }
+]}
