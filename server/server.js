@@ -20,7 +20,7 @@ var files = [
 
 //console.log(files);
 app.use(bp.urlencoded({extended:true}));
-app.use(express.static('res'));
+app.use(express.static('../res'));
 
 for(var i in files){
   (function (i) {
