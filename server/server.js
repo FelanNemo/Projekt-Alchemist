@@ -44,7 +44,7 @@ for(var i in files){
 app.post('/save', function (req, res) {
   console.log(req.body);
 
-  fs.readFile('savegame.json', function (err, data) {
+  fs.readFile('../savegame.json', function (err, data) {
     if(!err){
       try {
         var game = JSON.parse(data);
@@ -76,21 +76,19 @@ app.post('/save', function (req, res) {
 });
 
 app.get('/button', function (req, res) {
-console.log(req.body);
+//console.log(req.body);
 
-  fs.readFile('savegame.json', function (err, data) {
+  fs.readFile('../savegame.json', function (err) {
+    console.log(err);
     if(!err){
       console.log('Datei gefunden');
       res.writeHead(200,{'Content-Type':'application/json'});
-      res.end(JSON.stringify({da: true}))
+      res.end(JSON.stringify({file: true}));
     } else {
       console.log('Datei nicht gefunden');
       res.writeHead(200,{'Content-Type':'text/html'});
-      res.end(JSON.stringify({da: false}))
+      res.end(JSON.stringify({file: false}));
       //$('#countinueGame').attr({ 'disabled':'disabled'});
     }
-
   });
-
-
 });

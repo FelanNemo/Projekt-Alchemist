@@ -14,21 +14,19 @@
 	$.ajax({
 	url:'http://127.0.0.1:12345/button',
 	method:'GET',
-	data: {},
-	succsess: function(response){
-		if(response.da){
-			console.log('Weiterspielen darf aktive sein');
-			$('#countinueGame').prop('disabled',false);
-		} else{
-		console.log('Weiterspielen muss deaktiviter sein');
-		$('#countinueGame').prop('disabled',true);
-		}
-	},
-	error: function(response) {
+	data: {}
+}).done( function(res){
+			console.log(res);
+			if(res.file == true){
+				console.log('Weiterspielen darf aktive sein');
+				$('#countinueGame').prop('disabled',false);
+			} else{
+			console.log('Weiterspielen muss deaktiviert sein');
+			$('#countinueGame').prop('disabled',true);
+			}
+}).fail(function(response) {
 		console.log('Wir landen im Errorzweig des Ajaxs', arguments);
-		//console.log(response);
-	}
-});
+	});
 
 	$(document).ready(function(){
 		//w ist die Width des button
