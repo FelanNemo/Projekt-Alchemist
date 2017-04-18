@@ -13,38 +13,63 @@
 		//console.log(name);
 		$('#username').val('');
 
-		$.ajax({
-			url:'http://127.0.0.1:12345/save',
-			method:'POST',
-			data: {
-			name: name,
-			points: 0,
-			gametype: gametype
-		}
-		}).done(function (response) {
-			try {
-				response = JSON.parse(response);
-			} catch (e){}
-
-			if(response.saved){
-				console.log('Datei erstellt');
-				//console.log(response);
-			} else{
-				console.log('Da ging was schief');
+		if(name == ''){
+			alert('Bitte geben sie einen Namen ein!');
+		} else {
+			$.ajax({
+				url:'http://127.0.0.1:12345/save',
+				method:'POST',
+				data: {
+				name: name,
+				tutorial: false,
+				points: 0,
+				gametype: gametype
 			}
-		}).fail(function (response) {
-			console.log('Error', arguments);
-		});
+			}).done(function (response) {
+				try {
+					response = JSON.parse(response);
+				} catch (e){}
+
+				if(response.saved){
+					console.log('Datei erstellt');
+					//console.log(response);
+				} else{
+					console.log('Da ging was schief');
+				}
+			}).fail(function (response) {
+				console.log('Error', arguments);
+			});
+		}
 	});
 
+
+	$.ajax({
+		url:'http://127.0.0.1:12345/gametype',
+		method:'get',
+		data: {}
+	}).done(function (response) {
+			console.log('Erzeugt die Options für die Gameauswahl');
+			for(var i in response) {
+				var option = $('<option value='+ response[i] +'>');
+				option.html(response[i]);
+				option.appendTo($('#gametype'));
+			}
+	}).fail(function (response) {
+		console.log('Error', arguments);
+	});
+
+	$(document).ready(function(){
+		//w ist die Width des button
+		var w = $('#username').width() + 100 ;
+		$('form').css({'width': w});
+		$('button').css({'width': w});
+	});
 	</script>
-	<style>
-	</style>
 </head>
 <body>
 	<form id="player">
 		Username:<input id="username" placeholder="Please enter a Username"></input>
-		<br>Gametype: <select name="gametype">
+		<br>Gametype: <select id="gametype">
 		</select>
 		<br><button id="startGame">Start Game </button>
 	</form>

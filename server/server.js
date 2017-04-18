@@ -58,37 +58,51 @@ app.post('/save', function (req, res) {
         res.end('File corrupted');
       }
     } else {
-      //fs.writeFile('savegame.json', JSON.stringify( emptyFile ), function(err){
           var game = {game:[]};
-          //console.log(game);
           game.game.push(req.body);
-          //console.log(req.body);
-          fs.writeFile('savegame.json', JSON.stringify(game));
+          fs.writeFile('../savegame.json', JSON.stringify(game));
           console.log('Datei erstellt');
           res.writeHead(200,{'Content-Type':'application/json'});
           res.end(JSON.stringify({saved: true}));
-      //});
-    }
-
+      }
   });
-
-
 });
 
 app.get('/button', function (req, res) {
-//console.log(req.body);
-
   fs.readFile('../savegame.json', function (err) {
-    console.log(err);
     if(!err){
       console.log('Datei gefunden');
       res.writeHead(200,{'Content-Type':'application/json'});
       res.end(JSON.stringify({file: true}));
     } else {
       console.log('Datei nicht gefunden');
-      res.writeHead(200,{'Content-Type':'text/html'});
+      res.writeHead(200,{'Content-Type':'application/json'});
       res.end(JSON.stringify({file: false}));
-      //$('#countinueGame').attr({ 'disabled':'disabled'});
+    }
+  });
+});
+
+app.get('/gametype', function (req, res) {
+  fs.readFile('../res/games.json', function (err, data) {
+    if(!err){
+      //res.writeHead(200,{'Content-Type':'text/html'});
+      console.log('Datei gefunden!');
+      var games = JSON.parse(data);
+      var sendData = [];
+
+      for(var i in games.game){
+        console.log(games.game[i].gametyp);
+        sendData.push(games.game[i].gametyp);
+      }
+
+      res.send(sendData);
+      //console.log(sendData);
+
+
+    } else {
+      console.log('Datei nicht gefunden');
+      res.writeHead(200,{'Content-Type':'application/json'});
+      res.end(JSON.stringify({file: false}));
     }
   });
 });

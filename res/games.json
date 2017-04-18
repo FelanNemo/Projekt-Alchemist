@@ -4,7 +4,7 @@
     "combinations":[
       {"result":"alkohol","elements":["fire","water"]  },
       {"result":"fog","elements":["air","water"]  },
-      {"result":"tree","elements":["earth","water"]  },
+      {"result":"swamp","elements":["earth","water"]  }
     ]
   },
   {
@@ -12,7 +12,7 @@
     "combinations":[
       {"result":"alkohol","elements":["fire","water"]  },
       {"result":"fog","elements":["air","water"]  },
-      {"result":"tree","elements":["earth","water"]  },
+      {"result":"tree","elements":["earth","water"]  }
     ]
   }
 ]}
