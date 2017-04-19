@@ -14,8 +14,8 @@ var server = app.listen(12345, function() {
 
 var files = [
   {req:'/', file:'../index.html'},
-  {req:'/index.html', file:'../index.html'},
-  {req:'/user', file:'../user.html'}
+  {req:'/user', file:'../user.html'},
+  {req:'/admin', file:'../admin.html'}
 ];
 
 //console.log(files);

@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+	<title></title>
+	<meta charset="utf-8">
+	<script src="jquery-3.2.0.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+	<script>
+	$(document).on( 'click', '#saveEle', function(e) {
+
+	});
+
+
+	$.ajax({
+		url:'http://127.0.0.1:12345/gametype',
+		method:'get',
+		data: {}
+	}).done(function (response) {
+			console.log('Erzeugt die Options für die Gameauswahl');
+			for(var i in response) {
+				var option = $('<option value='+ response[i] +'>');
+				option.html(response[i]);
+				option.appendTo($('#gametype'));
+			}
+	}).fail(function (response) {
+		console.log('Error', arguments);
+	});
+
+	$(document).ready(function(){
+		//w ist die Width des button
+		var w = $('#username').width() + 170 ;
+		$('form').css({'width': w});
+		$('#saveEle').css({'width': w});
+	});
+	</script>
+</head>
+<body>
+	<form id="admin">
+    <br>Gametype: <select id="gametype">
+      <option value="new"> Neuen Spieltyp erstellen</option>
+		</select>
+		<br>Elementname:<input id="username" placeholder="Feuer"></input>
+    <br>Element Bild: <input id="pic" type="file"></input>
+    <br>Elementtyp: <select id="eletype">
+      <option value="start"> Start Element </option>
+      <option value="combination"> Kombinationselement </option>
+		</select>
+
+		<br><button id="saveEle">Start Game </button>
+	</form>
+</body>
+</html>
