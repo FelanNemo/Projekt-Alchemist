@@ -2,6 +2,10 @@
   {
     "gametyp":"standard",
     "combinations":[
+      {"result":"earth","elements":[]  },
+      {"result":"air","elements":[]  },
+      {"result":"fire","elements":[]  },
+      {"result":"water","elements":["fire","water"]  },
       {"result":"alkohol","elements":["fire","water"]  },
       {"result":"fog","elements":["air","water"]  },
       {"result":"swamp","elements":["earth","water"]  }

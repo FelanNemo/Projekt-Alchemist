@@ -7,6 +7,22 @@
   <link rel="stylesheet" href="style.css">
 	<script>
 	$(document).on( 'click', '#saveEle', function(e) {
+		e.preventDefault();
+	});
+
+	$(document).on('change', '#eletyp',function (e) {
+		e.preventDefault();
+
+		if($(this).val() == 'combination'){
+			$('#number').show();
+		} else{
+			$('#number').hide();
+		}
+	});
+
+	$(document).on('change', '#number', function () {
+		//console.log('Soll vorhandene Elemente durchsuchen und als auswahl liefern je nach nummer und game');
+		console.log($(this).children('option').val());
 
 	});
 
@@ -27,10 +43,12 @@
 	});
 
 	$(document).ready(function(){
+		$('#number').hide();
 		//w ist die Width des button
 		var w = $('#username').width() + 170 ;
 		$('form').css({'width': w});
 		$('#saveEle').css({'width': w});
+
 	});
 	</script>
 </head>
@@ -41,11 +59,17 @@
 		</select>
 		<br>Elementname:<input id="username" placeholder="Feuer"></input>
     <br>Element Bild: <input id="pic" type="file"></input>
-    <br>Elementtyp: <select id="eletype">
+    <br>Elementtyp: <select id="eletyp">
       <option value="start"> Start Element </option>
       <option value="combination"> Kombinationselement </option>
 		</select>
-
+   <br><span id="number">Aus wievielen Elementen soll das Element erzeugt werden:
+		 	<select>
+				<option value="2"> 2 </option>
+				<option value="3"> 3 </option>
+				<option value="4"> 4 </option>
+			</select>
+		</span>
 		<br><button id="saveEle">Start Game </button>
 	</form>
 </body>
