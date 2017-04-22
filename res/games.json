@@ -1,34 +1,31 @@
 {"game":[
-  {
-    "gametyp":"standard",
-    "combinations":[
-      {"result":"air","elements":[],"bild":"bilder/air.png"  },
-      {"result":"earth","elements":[],"bild":"bilder/earth.png"  },
-      {"result":"fire","elements":[],"bild":"bilder/fire.png"  },
-      {"result":"water","elements":[],"bild":"bilder/water.png"  },
-      {"result":"glas","elements":["fire","sand"],"bild":"bilder/alcohol.png"  },
-      {"result":"fog","elements":["air","water"],"bild":"bilder/fog.png"  },
-      {"result":"swamp","elements":["earth","water"],"bild":"bilder/swamp.png"  },
+  {"gametyp":"standard",
+   "combinations":[
+      {"result":"air","elements":[],"bild":"bilder/air.png"},
+      {"result":"earth","elements":[],"bild":"bilder/earth.png"},
+      {"result":"fire","elements":[],"bild":"bilder/fire.png"},
+      {"result":"water","elements":[],"bild":"bilder/water.png"},
+      {"result":"glas","elements":["fire","sand"],"bild":"bilder/alcohol.png"},
+      {"result":"fog","elements":["air","water"],"bild":"bilder/fog.png"},
+      {"result":"swamp","elements":["earth","water"],"bild":"bilder/swamp.png"},
       {"result":"gold","elements":["ore","fire"],"bild":"bilder/"},
       {"result":"iron","elements":["ore","fire","fire"],"bild":"bilder/"},
-      {"result":"lightning","elements":["air","fire"],"bild":"bilder/"},
-      {"result":"ore","elements":["earth","steam"],"bild":"bilder/"},
+      {"result":"lightning","elements":["air","fire"],"bild":"bilder/lightning.png"},
+      {"result":"ore","elements":["earth","steam"],"bild":"bilder/ore.png"},
       {"result":"sand","elements":["earth","air"],"bild":"bilder/"},
       {"result":"steam","elements":["air","fire"],"bild":"bilder/"},
       {"result":"storm","elements":["air","air"],"bild":"bilder/"},
       {"result":"stone","elements":["earth","fire"],"bild":"bilder/"}
-    ]
-  },
-  {
-    "gametyp":"technik",
-    "combinations":[
-      {"result":"ore","elements":[]  },
-      {"result":"energy","elements":[]  },
-      {"result":"fire","elements":[]  },
-      {"result":"water","elements":[]  },
-      {"result":"alkohol","elements":["fire","water"]  },
-      {"result":"fog","elements":["air","water"]  },
-      {"result":"tree","elements":["earth","water"]  }
-    ]
-  }
+      ]},
+  {"gametyp":"technik",
+   "combinations":[
+      {"result":"ore","elements":[],"bild":"bilder/ore.png"},
+      {"result":"energy","elements":[],"bild":"bilder/lightning.png"},
+      {"result":"fire","elements":[],"bild":"bilder/fire.png"},
+      {"result":"water","elements":[],"bild":"bilder/water.png"},
+      {"result":"alkohol","elements":["fire","water"],"bild":"bilder/alcohol.png"},
+      {"result":"fog","elements":["air","water"],"bild":"bilder/steam.png"},
+      {"result":"tree","elements":["earth","water"],"bild":"bilder/tree.png"},
+      {"result":"","elements":["empty"],"bild":"bilder/undefined"}
+  ]}
 ]}

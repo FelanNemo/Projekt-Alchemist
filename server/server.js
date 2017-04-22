@@ -45,7 +45,7 @@ app.post('/save', function (req, res) {
       try {
         var game = JSON.parse(data);
         game.game.push(req.body);
-        fs.writeFile('savegame.json', JSON.stringify(game));
+        fs.writeFile('../savegame.json', JSON.stringify(game));
         console.log('Datei gefunden');
         res.writeHead(200,{'Content-Type':'application/json'});
         res.end(JSON.stringify({saved: true}))
@@ -131,14 +131,20 @@ app.post('/addEle', function(req, res) {
   fs.readFile('../res/games.json', function (err, data) {
     if(!err){
         var games = JSON.parse(data);
-        var g = games.game.gametyp;
-        console.log(g);
-        console.log(input.gametyp);
+        //console.log(games);
 
-        if(g == input){
-          games.game.combinations.push(input.result, input.elements)
+        var g = [];
+        for(var i in games.game){
+          g.push(games.game[i].gametyp);
+        }
 
-          console.log(games.game.combinations);
+        for(var i in g){
+          if(g[i] == input.gametyp){
+            games.game[i].combinations.push({"result":input.result,"elements":input.elements,"bild":"bilder/"+input.bild})
+            fs.writeFile('../res/games.json', JSON.stringify(games));
+              console.log(games.game[i].combinations);
+              break;
+          }
         }
 
         //games.game.push(req.body);
@@ -149,7 +155,7 @@ app.post('/addEle', function(req, res) {
     } else {
           var game = {game:[]};
           game.game.push(req.body);
-          fs.writeFile('../savegame.json', JSON.stringify(game));
+          fs.writeFile('../res/games.json', JSON.stringify(game));
           console.log('Datei erstellt');
           res.writeHead(200,{'Content-Type':'application/json'});
           res.end(JSON.stringify({saved: true}));
