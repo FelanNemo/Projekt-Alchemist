@@ -14,6 +14,14 @@
 
 		var gametyp = $('#gametype').val();
 		var name = $('#name').val();
+		var filename = $('#pic').val();
+
+		if (filename.substring(3,11) == 'fakepath') {
+					 filename = filename.substring(12);
+			 } // Remove c:\fake at beginning from localhost chrome
+
+		console.log(filename);
+		
 		//Elemente speichern
 		var elements = [];
 		for(var i  = 0; i < $('#number select').length; i++){
@@ -21,7 +29,8 @@
 			elements.push(element);
 		}
 
-		var bild; //How to save the picture in the right folder and then only add the name
+
+		//How to save the picture in the right folder and then only add the name
 
 		$.ajax({
 			url:'http://127.0.0.1:12345/addEle',
@@ -30,7 +39,8 @@
 				gametyp: gametyp,
 				result: name,
 				elements: elements,
-				bild: bild
+				bild: filename
+				//bildData: how to send a pic???
 			}
 		}).done(function (response) {
 				console.log('Send Request');
