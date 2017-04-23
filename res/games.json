@@ -25,7 +25,6 @@
       {"result":"water","elements":[],"bild":"bilder/water.png"},
       {"result":"alkohol","elements":["fire","water"],"bild":"bilder/alcohol.png"},
       {"result":"fog","elements":["air","water"],"bild":"bilder/steam.png"},
-      {"result":"tree","elements":["earth","water"],"bild":"bilder/tree.png"},
-      {"result":"","elements":["empty"],"bild":"bilder/undefined"}
+      {"result":"tree","elements":["earth","water"],"bild":"bilder/tree.png"}
   ]}
 ]}

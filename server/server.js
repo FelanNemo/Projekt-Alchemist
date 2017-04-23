@@ -133,6 +133,14 @@ app.post('/addEle', function(req, res) {
         var games = JSON.parse(data);
         //console.log(games);
 
+        var arr = input.elements;
+        var index = arr.indexOf('empty')
+
+        if(index > -1){
+          arr.splice(index,1);
+        }
+
+
         var g = [];
         for(var i in games.game){
           g.push(games.game[i].gametyp);
@@ -140,7 +148,7 @@ app.post('/addEle', function(req, res) {
 
         for(var i in g){
           if(g[i] == input.gametyp){
-            games.game[i].combinations.push({"result":input.result,"elements":input.elements,"bild":"bilder/"+input.bild})
+            games.game[i].combinations.push({"result":input.result,"elements":arr,"bild":"bilder/"+input.bild})
             fs.writeFile('../res/games.json', JSON.stringify(games));
               console.log(games.game[i].combinations);
               break;

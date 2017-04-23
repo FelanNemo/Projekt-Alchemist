@@ -7,7 +7,8 @@
   <link rel="stylesheet" href="style.css">
 	<script>
 
-	var options = [];
+	var opt = [];
+
 	$(document).on( 'click', '#saveEle', function(e) {
 		e.preventDefault();
 
@@ -43,7 +44,11 @@
 
 	$(document).on('change','#gametype', function(e){
 		e.preventDefault();
-		sel();
+ 		for(var i in $('#number option')){
+			$('#number option').remove();
+		}
+		sel($('#element'));
+		console.log($('#number').children.length*1);
 	});
 
 	$(document).on('change', '#eletyp', function(e){
@@ -56,21 +61,20 @@
 		}
 	});
 
-	$(document).on('change', '.element', function(e){
-		var sel = $('<select class="element" data-selected=0>')
-		if($(this).val() != 'empty' && $(this).attr('data-selected') == '0'){
-			sel.appendTo('#number');
-			$(this).attr('data-selected', '1');
-			for( var i in options){
-				options[i].appendTo(sel);
+	$(document).on('change', '#number select', function(e){
+			var id = $('#number').children('select').length*1;
+			console.log(id);
+
+			var sele = $('<select id="'+id+'" data-selected=0>')
+			if($(this).val() != 'empty' && $(this).attr('data-selected') == '0'){
+				sele.appendTo('#number');
+				$(this).attr('data-selected', '1');
 			}
-			//How to disable the creation after first change???
-		}
+			sel($('#'+id));
 	});
 
-	var sel = function () {
+	var sel = function (elementID) {
 		var gametyp = $('#gametype').val();
-		//console.log(gametyp);
 
 		$.ajax({
 			url:'http://127.0.0.1:12345/select',
@@ -80,18 +84,16 @@
 			}
 		}).done(function (response) {
 				console.log('Erzeugt die Options für die Gameauswahl');
-				var sel = $('<select class="element" data-selected="0"></select>')
 				var empty = $('<option value=empty>');
 				empty.html('Wähle ein Element');
-				empty.appendTo(sel);
+				empty.appendTo(elementID);
 				for(var i in response){
 					op = $('<option value='+ response[i] +'>');
 					op.html(response[i]);
-					op.appendTo(sel);
-					options.push(op);
+					op.appendTo(elementID);
+					opt.push(op);
 				}
-				sel.appendTo('#number');
-
+				opt = [];
 		}).fail(function (response) {
 			console.log('Error', arguments);
 		});
@@ -134,6 +136,9 @@
 		</select>
 
 		<span id="number">
+			<select id="element" data-selected="0">
+
+			</select>
 
 		</span>
 		<br><button id="saveEle">Start Game </button>
