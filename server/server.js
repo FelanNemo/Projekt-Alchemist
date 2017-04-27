@@ -1,6 +1,12 @@
 var fs = require('fs');
 var express = require('express');
 var bp = require('body-parser');
+
+var path = require('path');
+var formidable = require('formidable');
+var readChunk = require('read-chunk');
+var fileType = require('file-type');
+
 var app = express();
 
 var server = app.listen(12345, function() {
@@ -12,7 +18,8 @@ var server = app.listen(12345, function() {
 var files = [
   {req:'/', file:'../index.html'},
   {req:'/user', file:'../user.html'},
-  {req:'/admin', file:'../admin.html'}
+  {req:'/admin', file:'../admin.html'},
+  {req:'/game', file:'../game.html'}
 ];
 
 app.use(bp.urlencoded({extended:true}));
@@ -131,6 +138,11 @@ app.post('/addEle', function(req, res) {
   fs.readFile('../res/games.json', function (err, data) {
     if(!err){
         var games = JSON.parse(data);
+        var pic = [];
+        var form = new formidable.IncomingForm();
+
+        form.uploadDir = path.join(__dirname, '../res/bilder');
+
         //console.log(games);
 
         var arr = input.elements;
@@ -148,12 +160,34 @@ app.post('/addEle', function(req, res) {
 
         for(var i in g){
           if(g[i] == input.gametyp){
-            games.game[i].combinations.push({"result":input.result,"elements":arr,"bild":"bilder/"+input.bild})
+            games.game[i].combinations.push({"result":input.result,"elements":arr,"bild":"bilder/"+input.bildName})
             fs.writeFile('../res/games.json', JSON.stringify(games));
               console.log(games.game[i].combinations);
               break;
-          }
-        }
+          }//End of if(g[i] == input.gametyp)
+        }//End of for(var i in g)
+
+        // Invoked when a file has finished uploading.
+        form.on('file', function (name, file) {
+
+        var buffer = null,
+        type = null,
+        filename = '';
+
+        // Read a chunk of the file.
+        buffer = readChunk.sync(file.path, 0, 262);
+        // Get the file type using the buffer read using read-chunk
+        type = fileType(buffer);
+
+        // Check the file type, must be either png,jpg or jpeg
+        if (type !== null && type.ext === 'png') {
+            // Assign new file name
+            filename = input.name+'.png';
+
+            // Move the file with the new file name
+            fs.rename(file.path, path.join(__dirname, '../res/bilder/' + filename));
+          }//End of if (type !== null && type.ext === 'png')
+        });//End of form.on
 
         //games.game.push(req.body);
         //fs.writeFile('games.json', JSON.stringify(games));

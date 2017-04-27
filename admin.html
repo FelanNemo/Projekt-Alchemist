@@ -14,14 +14,23 @@
 
 		var gametyp = $('#gametype').val();
 		var name = $('#name').val();
-		var filename = $('#pic').val();
+		 // Get the files from input, create new FormData.
+		var files = $('#pic').get(0).files, formData = new FormData();
 
-		if (filename.substring(3,11) == 'fakepath') {
-					 filename = filename.substring(12);
-			 } // Remove c:\fake at beginning from localhost chrome
+		if (files.length === 0) {
+        alert('Select a file to upload.');
+        return false;
+    }
 
-		console.log(filename);
-		
+		// Append the files to the formData.
+    for (var i=0; i < files.length; i++) {
+        var file = files[i];
+        formData.append('photos[]', file, file.name);
+    }
+
+		// Note: We are only appending the file inputs to the FormData.
+    uploadFiles(formData);
+
 		//Elemente speichern
 		var elements = [];
 		for(var i  = 0; i < $('#number select').length; i++){
@@ -39,8 +48,10 @@
 				gametyp: gametyp,
 				result: name,
 				elements: elements,
-				bild: filename
-				//bildData: how to send a pic???
+				bildName: name+'.png',
+				bildData: formData,
+				processData: false,
+        contentType: false
 			}
 		}).done(function (response) {
 				console.log('Send Request');
