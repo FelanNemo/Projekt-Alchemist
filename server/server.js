@@ -3,9 +3,6 @@ var express = require('express');
 var bp = require('body-parser');
 
 var path = require('path');
-var formidable = require('formidable');
-var readChunk = require('read-chunk');
-var fileType = require('file-type');
 
 var app = express();
 
@@ -138,8 +135,6 @@ app.post('/addEle', function(req, res) {
   fs.readFile('../res/games.json', function (err, data) {
     if(!err){
         var games = JSON.parse(data);
-        var pic = [];
-        var form = new formidable.IncomingForm();
 
         form.uploadDir = path.join(__dirname, '../res/bilder');
 
@@ -151,7 +146,6 @@ app.post('/addEle', function(req, res) {
         if(index > -1){
           arr.splice(index,1);
         }
-
 
         var g = [];
         for(var i in games.game){
@@ -167,30 +161,6 @@ app.post('/addEle', function(req, res) {
           }//End of if(g[i] == input.gametyp)
         }//End of for(var i in g)
 
-        // Invoked when a file has finished uploading.
-        form.on('file', function (name, file) {
-
-        var buffer = null,
-        type = null,
-        filename = '';
-
-        // Read a chunk of the file.
-        buffer = readChunk.sync(file.path, 0, 262);
-        // Get the file type using the buffer read using read-chunk
-        type = fileType(buffer);
-
-        // Check the file type, must be either png,jpg or jpeg
-        if (type !== null && type.ext === 'png') {
-            // Assign new file name
-            filename = input.name+'.png';
-
-            // Move the file with the new file name
-            fs.rename(file.path, path.join(__dirname, '../res/bilder/' + filename));
-          }//End of if (type !== null && type.ext === 'png')
-        });//End of form.on
-
-        //games.game.push(req.body);
-        //fs.writeFile('games.json', JSON.stringify(games));
         console.log('Datei gefunden');
         res.writeHead(200,{'Content-Type':'application/json'});
         res.end(JSON.stringify({saved: true}))

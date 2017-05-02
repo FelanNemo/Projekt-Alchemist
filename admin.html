@@ -14,34 +14,13 @@
 
 		var gametyp = $('#gametype').val();
 		var name = $('#name').val();
-<<<<<<< HEAD
-		 // Get the files from input, create new FormData.
-		var files = $('#pic').get(0).files, formData = new FormData();
 
-		if (files.length === 0) {
-        alert('Select a file to upload.');
-        return false;
-    }
-
-		// Append the files to the formData.
-    for (var i=0; i < files.length; i++) {
-        var file = files[i];
-        formData.append('photos[]', file, file.name);
-    }
-
-		// Note: We are only appending the file inputs to the FormData.
-    uploadFiles(formData);
-
-=======
->>>>>>> parent of a4b9f9d... Admin small Updat to filename
 		//Elemente speichern
 		var elements = [];
 		for(var i  = 0; i < $('#number select').length; i++){
 			var element = $('#number select').get(i).value;
 			elements.push(element);
 		}
-
-		var bild; //How to save the picture in the right folder and then only add the name
 
 		$.ajax({
 			url:'http://127.0.0.1:12345/addEle',
@@ -50,14 +29,8 @@
 				gametyp: gametyp,
 				result: name,
 				elements: elements,
-<<<<<<< HEAD
 				bildName: name+'.png',
-				bildData: formData,
-				processData: false,
-        contentType: false
-=======
-				bild: bild
->>>>>>> parent of a4b9f9d... Admin small Updat to filename
+
 			}
 		}).done(function (response) {
 				console.log('Send Request');

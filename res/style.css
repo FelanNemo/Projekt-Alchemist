@@ -5,7 +5,8 @@
 
 body{
   font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
-
+  width: 100%;
+  height: auto;
   background-color: rgba(76,70,50,0.2);
 }
 
@@ -57,4 +58,49 @@ a{
   padding: 20px;
   font-size: 20px;
   margin-top: 20px;
+}
+
+/*Game Style*/
+#elements, #menu, #trash{
+  position: relative;
+  display: flex;
+  float:left;
+}
+
+#elements{
+  margin: 0px 0 0 25px;
+}
+
+#gameHTML img{
+  height: 44px;
+  width: 44px;
+  border: 3px solid black;
+  border-radius: 50%;
+  padding:2px;
+}
+
+#elements img{
+  border: none;
+  height: 50px;
+  width: 50px;
+}
+
+#menu{
+  margin: 0px 25px 0 0;
+  float: right;
+}
+
+#menu ul{
+  display: none;
+}
+
+#gameField{
+  background-color: yellow;
+  width: 90%;
+  height: 500px;
+  margin: 25px auto 0 auto;
+}
+
+#trash{
+  margin: 10px 50% 15px 50%;
 }
