@@ -10,7 +10,47 @@
   <link rel="stylesheet" href="jquery-ui-1.12.1.custom/jquery-ui.min.css">
 	<script>
 
-  
+	$(document).ready(function () {
+
+		fillBook();
+
+
+		$(document).on('click', '#elements', function (e) {
+	  	e.preventDefault();
+
+			var book = $('<div id="book"></div>');
+			if($('#elements').attr('data-bookState') == 'false'){
+				book.appendTo('#elements');
+				$('#elements').attr('data-bookState', 'true');
+			} else{
+				$('#book').remove();
+				$('#elements').attr('data-bookState', 'false');
+			}
+	  });
+
+
+	});
+
+var fillBook = function () {
+	var ele = {};
+	var gametyp = '';
+
+	$.ajax({
+		url:'http://127.0.0.1:12345/book',
+		method:'get',
+		data:{
+			gametyp: gametyp,
+			elements: ele
+		}
+	}).done(function (response) {
+		console.log('FillBook is called');
+
+	}).fail(function (response) {
+		console.log('Error', arguments);
+	});
+
+}
+
 
 
 
@@ -18,7 +58,7 @@
 	</script>
 </head>
 <body id="gameHTML">
-  <div id="elements">
+  <div id="elements" data-bookState="false">
       <img src="/webpics/plus-sign-in-circle.png">
   </div>
 

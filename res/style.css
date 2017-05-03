@@ -85,6 +85,12 @@ a{
   width: 50px;
 }
 
+#book{
+  height: 400px;
+  width: 10%;
+  background-color: brown;
+}
+
 #menu{
   margin: 0px 25px 0 0;
   float: right;

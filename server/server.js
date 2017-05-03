@@ -103,6 +103,18 @@ app.get('/gametype', function (req, res) {
   });
 });
 
+app.get('/book', function (req, res) {
+  fs.readFile('../res/games.json', function (err, data) {
+    if(!err){
+      console.log('Datei gefunden!');
+    } else {
+      console.log('Datei nicht gefunden');
+      res.writeHead(200,{'Content-Type':'application/json'});
+      res.end(JSON.stringify({file: false}));
+    }
+  });
+});
+
 app.post('/select', function(req, res){
   fs.readFile('../res/games.json', function (err, data) {
     if(!err){
