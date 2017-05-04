@@ -42,7 +42,6 @@ for(var i in files){
 };
 
 app.post('/save', function (req, res) {
-  console.log(req.body);
 
   fs.readFile('../savegame.json', function (err, data) {
     if(!err){
@@ -60,10 +59,27 @@ app.post('/save', function (req, res) {
     } else {
           var game = {game:[]};
           game.game.push(req.body);
-          fs.writeFile('../savegame.json', JSON.stringify(game));
-          console.log('Datei erstellt');
-          res.writeHead(200,{'Content-Type':'application/json'});
-          res.end(JSON.stringify({saved: true}));
+          console.log('Game');
+          console.log(game.game.results);
+          console.log('----------------');
+
+          fs.readFile('../res/games.json',function(err2,data2) {
+            var temp = JSON.parse(data2);
+            if(!err2){
+
+              for(var i in temp.game){
+                if(req.body.gametype == temp.game[i].gametyp){
+                  for(var j = 0; j<4; j++){
+                    game.game[i].results.push(temp.game[i].combinations[j].result)
+                  }
+                  fs.writeFile('../savegame.json', JSON.stringify(game));
+                  console.log('Datei erstellt');
+                  res.writeHead(200,{'Content-Type':'application/json'});
+                  res.end(JSON.stringify({saved: true}));
+                }
+              }
+            }
+          });
       }
   });
 });
@@ -104,9 +120,18 @@ app.get('/gametype', function (req, res) {
 });
 
 app.get('/book', function (req, res) {
-  fs.readFile('../res/games.json', function (err, data) {
+  fs.readFile('../savegame.json', function (err, data) {
     if(!err){
       console.log('Datei gefunden!');
+      var games = JSON.parse(data);
+      var sendData = [];
+
+      for(var i in games.game){
+        for(var j = 1; j < games.game[i].results.length; j++)
+        sendData.push(games.game[i].results[j]);
+      }
+      res.send(sendData);
+
     } else {
       console.log('Datei nicht gefunden');
       res.writeHead(200,{'Content-Type':'application/json'});

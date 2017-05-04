@@ -1,1 +1,15 @@
-{"game":[{"name":"dm141555","tutorial":"false","points":"0","gametype":"standard"}]}
+{
+  "game":[{
+    "name":"a",
+    "tutorial":"false",
+    "points":"0",
+    "gametype":"standard",
+    "results":[
+      "0",
+      "air",
+      "earth",
+      "fire",
+      "water"
+    ]
+  }]
+}

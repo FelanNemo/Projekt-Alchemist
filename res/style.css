@@ -65,13 +65,14 @@ a{
   position: relative;
   display: flex;
   float:left;
+  min-width: 50px;
 }
 
 #elements{
   margin: 0px 0 0 25px;
 }
 
-#gameHTML img{
+#menu img, #trash img{
   height: 44px;
   width: 44px;
   border: 3px solid black;
@@ -88,6 +89,7 @@ a{
 #book{
   height: 400px;
   width: 10%;
+  min-width: 50px;
   background-color: brown;
 }
 
@@ -105,6 +107,7 @@ a{
   width: 90%;
   height: 500px;
   margin: 25px auto 0 auto;
+  border: none;
 }
 
 #trash{

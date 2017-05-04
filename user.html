@@ -10,8 +10,10 @@
 		e.preventDefault();
 		var name = $('#username').val();
 		var gametype= $('#gametype').val();
+		var eleArr = [];
 		//console.log(name);
-		$('#username').val('');
+		//$('#username').val('');
+		//var results = [];
 
 		window.location.href='http://127.0.0.1:12345/game';
 
@@ -25,7 +27,8 @@
 				name: name,
 				tutorial: false,
 				points: 0,
-				gametype: gametype
+				gametype: gametype,
+				results: [0]
 			}
 			}).done(function (response) {
 				try {
@@ -34,7 +37,6 @@
 
 				if(response.saved){
 					console.log('Datei erstellt');
-					//console.log(response);
 				} else{
 					console.log('Da ging was schief');
 				}
