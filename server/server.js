@@ -98,52 +98,65 @@ app.get('/book', function (req, res) {
   });
 });
 
-app.post('/combine', function (req, res) {
 
+/*---Postrequest---*/
+app.post('/combine', function (req, res) {
   fs.readFile('../savegame.json', function (err, data) {
     if(!err){
         var game = JSON.parse(data);
         var gametyp = game.game[0].gametype;
+        var tempi = [];
 
         fs.readFile('../res/games.json', function (err2, data2) {
           if(!err2){
             var temp = JSON.parse(data2);
-
-            console.log(req.body.elements);
-
+            
             for( var i in game.game){
               if(gametyp == temp.game[i].gametyp){
                 for(var j = 4; j < temp.game[i].combinations.length; j++){
-                  console.log(temp.game[i].combinations[j].elements);
-                  if(temp.game[i].combinations[j].elements == req.body.elements){
-                    console.log('element gefunden');
-                  }
+                  for(var l in req.body.elements){
+                    //console.log(req.body.elements[l]);
+                    for(var k in temp.game[i].combinations[j].elements){
+                    //console.log(temp.game[i].combinations[j].elements[k]);
+                      if(req.body.elements[l] == temp.game[i].combinations[j].elements[k] ){
+                        tempi.push(temp.game[i].combinations[j]);
+                        //console.log('Tempi: ' + tempi);
+                      }
+                    }//End for k
+                  }//End for l
                 }//End for j
               }//End if
             }//End for i
+
+            for(var i = 0; i < (tempi.length-1); i++ ){
+              var ele0 = tempi[i];
+
+              for(var j = (i+1); j < tempi.length; j++){
+                if(ele0 == tempi[j]){
+                  console.log(tempi[j].result);
+                  res.send(tempi[j].result)
+                  break;
+                }//End if
+              }//End for j
+            }//End for i
+
             console.log('Found game.json -----------------------');
           } else {
             console.log('Datei nicht gefunden');
-            res.writeHead(200,{'Content-Type':'application/json'});
-            res.end(JSON.stringify({file: false}));
           }//End Else
         }); //End readFile GameJSON
     } else {
       console.log('Datei nicht gefunden');
-      res.writeHead(200,{'Content-Type':'application/json'});
       res.end(JSON.stringify({file: false}));
     }//End else
   });//End readFile SaveJSON
 });//En app.det COMBINE
 
-
-/*---Postrequest---*/
 app.post('/save', function (req, res) {
   fs.readFile('../savegame.json', function (err, data) {
     if(!err){
       try {
-        var game = JSON.parse(data);
-        game.game.push(req.body);
+        var game = req.body;
         fs.writeFile('../savegame.json', JSON.stringify(game));
         console.log('Datei gefunden');
         res.writeHead(200,{'Content-Type':'application/json'});
@@ -173,6 +186,25 @@ app.post('/save', function (req, res) {
             }
           });
       }
+  });
+});
+
+app.post('/update', function(req, res) {
+  fs.readFile('../savegame.json', function (err, data) {
+    if(!err){
+      var game = JSON.parse(data);
+
+      var isThere = true;
+      for(var i in game.game[0].results){
+        if(req.body.result == game.game[0].results[i])
+        isThere = false;
+        }
+      }
+
+    if(isThere == true){
+        game.game[0].results.push(req.body.result);
+      }
+      fs.writeFile('../savegame.json', JSON.stringify(game));
   });
 });
 

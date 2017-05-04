@@ -9,12 +9,10 @@
       {"result":"fog","elements":["air","water"],"bild":"bilder/fog.png"},
       {"result":"swamp","elements":["earth","water"],"bild":"bilder/swamp.png"},
       {"result":"gold","elements":["ore","fire"],"bild":"bilder/"},
-      {"result":"iron","elements":["ore","fire","fire"],"bild":"bilder/"},
       {"result":"lightning","elements":["air","fire"],"bild":"bilder/lightning.png"},
       {"result":"ore","elements":["earth","steam"],"bild":"bilder/ore.png"},
       {"result":"sand","elements":["earth","air"],"bild":"bilder/"},
       {"result":"steam","elements":["air","fire"],"bild":"bilder/"},
-      {"result":"storm","elements":["air","air"],"bild":"bilder/"},
       {"result":"stone","elements":["earth","fire"],"bild":"bilder/"}
       ]},
   {"gametyp":"technik",

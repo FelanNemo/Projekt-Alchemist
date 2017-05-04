@@ -81,12 +81,33 @@
 						elements: ele
 					}
 				}).done(function (response) {
-					//console.log(response);
+					console.log(response);
+					//var img = $('<img src=/bilder/'+response+'.png>');
+					//console.log(img.prop('src'));
+					//img.appendTo('#book');
+					$('#book').remove();
+					fillBook();
+
+					dragEle.remove();
+
+					$.ajax({
+						url: 'http://127.0.0.1:12345/update',
+						method:'post',
+						data: {
+							result: response
+						}
+					}).done(function (response) {
+
+					}).fail(function (response) {
+						console.log('Error', arguments);
+					});
+
 				}).fail(function (response) {
 					console.log('Error', arguments);
 				});
       }//End drop
 		});//End dropable
+
 		$('#trash').droppable({
 			drop: function( event, ui ) {
         dragEle.remove();
@@ -100,16 +121,6 @@
 <body id="gameHTML">
   <div id="elements" data-bookState="false">
       <img id="open" src="/webpics/plus-sign-in-circle.png">
-  </div>
-
-  <div id="menu">
-    <img src="/webpics/menu-alt-512.png">
-
-    <ul>
-      <li> Save </li>
-      <li> Save & Quit </li>
-      <li> Quit </li>
-    </ul>
   </div>
 
 <div id=gameField>
