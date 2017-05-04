@@ -61,20 +61,38 @@
 		var newEle = $('<img src="'+ele+'">');
 		newEle.attr('data-name', name);
 		newEle.draggable();
-		newEle.appendTo('#gameField');//How to append to mouse
-
-		§.ajax({
-			url: 'http://127.0.0.1:12345/combine',
-			method:'get'
-		}).done(function (response) {
-
-		})..fail(function (response) {
-			console.log('Error', arguments);
-		});
-
-
+		newEle.appendTo('#cauldron');//How to append to mouse
 	});
 
+	$(document).on('mouseup', '#cauldron', function(){
+		var dragEle = $(this).children('img');
+		var ele = [];
+
+		$('#cauldron').droppable({
+      drop: function( event, ui ) {
+				for(var i = 0; i < $('#cauldron').children('img').length; i++){
+						ele.push(dragEle[i].dataset.name);
+				}//End for
+				console.log(ele);
+				$.ajax({
+					url: 'http://127.0.0.1:12345/combine',
+					method:'post',
+					data: {
+						elements: ele
+					}
+				}).done(function (response) {
+					//console.log(response);
+				}).fail(function (response) {
+					console.log('Error', arguments);
+				});
+      }//End drop
+		});//End dropable
+		$('#trash').droppable({
+			drop: function( event, ui ) {
+        dragEle.remove();
+      }//end drop
+		});//End droppable
+	});
 
 
 	</script>
@@ -94,9 +112,10 @@
     </ul>
   </div>
 
-
-  <div id="gameField">
-  </div>
+<div id=gameField>
+	<div id="cauldron">
+	</div>
+</div>
 
   <div id="trash">
     <img src="/webpics/basket.png">

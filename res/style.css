@@ -110,6 +110,17 @@ a{
   border: none;
 }
 
+#cauldron{
+  width: 150px;
+  height: 150px;
+  margin: auto;
+  background-color: blue;
+}
+
 #trash{
+  width: 100%;
+}
+
+#trash img{
   margin: 10px 50% 15px 50%;
 }

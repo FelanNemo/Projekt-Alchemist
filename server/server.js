@@ -41,49 +41,7 @@ for(var i in files){
   })(i);
 };
 
-app.post('/save', function (req, res) {
-
-  fs.readFile('../savegame.json', function (err, data) {
-    if(!err){
-      try {
-        var game = JSON.parse(data);
-        game.game.push(req.body);
-        fs.writeFile('../savegame.json', JSON.stringify(game));
-        console.log('Datei gefunden');
-        res.writeHead(200,{'Content-Type':'application/json'});
-        res.end(JSON.stringify({saved: true}))
-      } catch (err){
-        res.writeHead(500,{'Content-Type':'text/html'});
-        res.end('File corrupted');
-      }
-    } else {
-          var game = {game:[]};
-          game.game.push(req.body);
-          console.log('Game');
-          console.log(game.game.results);
-          console.log('----------------');
-
-          fs.readFile('../res/games.json',function(err2,data2) {
-            var temp = JSON.parse(data2);
-            if(!err2){
-
-              for(var i in temp.game){
-                if(req.body.gametype == temp.game[i].gametyp){
-                  for(var j = 0; j<4; j++){
-                    game.game[i].results.push(temp.game[i].combinations[j].result)
-                  }
-                  fs.writeFile('../savegame.json', JSON.stringify(game));
-                  console.log('Datei erstellt');
-                  res.writeHead(200,{'Content-Type':'application/json'});
-                  res.end(JSON.stringify({saved: true}));
-                }
-              }
-            }
-          });
-      }
-  });
-});
-
+/*---Getrequest---*/
 app.get('/button', function (req, res) {
   fs.readFile('../savegame.json', function (err) {
     if(!err){
@@ -140,29 +98,105 @@ app.get('/book', function (req, res) {
   });
 });
 
+app.post('/combine', function (req, res) {
+
+  fs.readFile('../savegame.json', function (err, data) {
+    if(!err){
+        var game = JSON.parse(data);
+        var gametyp = game.game[0].gametype;
+
+        fs.readFile('../res/games.json', function (err2, data2) {
+          if(!err2){
+            var temp = JSON.parse(data2);
+
+            console.log(req.body.elements);
+
+            for( var i in game.game){
+              if(gametyp == temp.game[i].gametyp){
+                for(var j = 4; j < temp.game[i].combinations.length; j++){
+                  console.log(temp.game[i].combinations[j].elements);
+                  if(temp.game[i].combinations[j].elements == req.body.elements){
+                    console.log('element gefunden');
+                  }
+                }//End for j
+              }//End if
+            }//End for i
+            console.log('Found game.json -----------------------');
+          } else {
+            console.log('Datei nicht gefunden');
+            res.writeHead(200,{'Content-Type':'application/json'});
+            res.end(JSON.stringify({file: false}));
+          }//End Else
+        }); //End readFile GameJSON
+    } else {
+      console.log('Datei nicht gefunden');
+      res.writeHead(200,{'Content-Type':'application/json'});
+      res.end(JSON.stringify({file: false}));
+    }//End else
+  });//End readFile SaveJSON
+});//En app.det COMBINE
+
+
+/*---Postrequest---*/
+app.post('/save', function (req, res) {
+  fs.readFile('../savegame.json', function (err, data) {
+    if(!err){
+      try {
+        var game = JSON.parse(data);
+        game.game.push(req.body);
+        fs.writeFile('../savegame.json', JSON.stringify(game));
+        console.log('Datei gefunden');
+        res.writeHead(200,{'Content-Type':'application/json'});
+        res.end(JSON.stringify({saved: true}))
+      } catch (err){
+        res.writeHead(500,{'Content-Type':'text/html'});
+        res.end('File corrupted');
+      }
+    } else {
+          var game = {game:[]};
+          game.game.push(req.body);
+          fs.readFile('../res/games.json',function(err2,data2) {
+            var temp = JSON.parse(data2);
+            if(!err2){
+
+              for(var i in temp.game){
+                if(req.body.gametype == temp.game[i].gametyp){
+                  for(var j = 0; j<4; j++){
+                    game.game[i].results.push(temp.game[i].combinations[j].result)
+                  }
+                  fs.writeFile('../savegame.json', JSON.stringify(game));
+                  console.log('Datei erstellt');
+                  res.writeHead(200,{'Content-Type':'application/json'});
+                  res.end(JSON.stringify({saved: true}));
+                }
+              }
+            }
+          });
+      }
+  });
+});
+
 app.post('/select', function(req, res){
   fs.readFile('../res/games.json', function (err, data) {
     if(!err){
       var sendData = [];
 
-        var games = JSON.parse(data);
-        console.log('Datei gefunden');
-        //console.log(req.body.gametyp);
+      var games = JSON.parse(data);
+      console.log('Datei gefunden');
+      //console.log(req.body.gametyp);
 
         for(var i in games.game){
           if(games.game[i].gametyp == req.body.gametyp){
             for(var j in games.game[i].combinations){
               sendData.push(games.game[i].combinations[j].result);
-            }
-          }
-        }
+            }//End for
+          }//End if
+        }//End for
         res.send(sendData);
         //console.log(sendData);
-    } else {
-
-      }
+    }//End if(!err)
   });
-});
+});//End app.pos Select
 
 app.post('/addEle', function(req, res) {
   //console.log(req.body);
@@ -172,10 +206,6 @@ app.post('/addEle', function(req, res) {
   fs.readFile('../res/games.json', function (err, data) {
     if(!err){
         var games = JSON.parse(data);
-
-        form.uploadDir = path.join(__dirname, '../res/bilder');
-
-        //console.log(games);
 
         var arr = input.elements;
         var index = arr.indexOf('empty')
