@@ -105,30 +105,43 @@ app.post('/combine', function (req, res) {
     if(!err){
         var game = JSON.parse(data);
         var gametyp = game.game[0].gametype;
-        var tempi = [];
+        var tempi = '';
 
         fs.readFile('../res/games.json', function (err2, data2) {
           if(!err2){
             var temp = JSON.parse(data2);
-            
+
             for( var i in game.game){
               if(gametyp == temp.game[i].gametyp){
                 for(var j = 4; j < temp.game[i].combinations.length; j++){
+
+                  gefunden = 0;
                   for(var l in req.body.elements){
                     //console.log(req.body.elements[l]);
                     for(var k in temp.game[i].combinations[j].elements){
                     //console.log(temp.game[i].combinations[j].elements[k]);
                       if(req.body.elements[l] == temp.game[i].combinations[j].elements[k] ){
-                        tempi.push(temp.game[i].combinations[j]);
+                        //tempi.push(temp.game[i].combinations[j]);
+
+                        gefunden++;
+
                         //console.log('Tempi: ' + tempi);
                       }
                     }//End for k
                   }//End for l
+
+                  if ( gefunden == 2 ) {
+                    tempi = temp.game[i].combinations[j].result;
+                    console.log( 'gefunden in ' + j );
+                  }
+
                 }//End for j
               }//End if
             }//End for i
 
-            for(var i = 0; i < (tempi.length-1); i++ ){
+            if ( tempi != '' )   res.send(tempi)
+
+          /*  for(var i = 0; i < (tempi.length-1); i++ ){
               var ele0 = tempi[i];
 
               for(var j = (i+1); j < tempi.length; j++){
@@ -138,7 +151,7 @@ app.post('/combine', function (req, res) {
                   break;
                 }//End if
               }//End for j
-            }//End for i
+            }//End for i*/
 
             console.log('Found game.json -----------------------');
           } else {
