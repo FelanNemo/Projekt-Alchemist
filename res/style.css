@@ -58,8 +58,8 @@ von den halben Größen des Elternelements ab um das Element mittig zu positioni
 
 /*Alchemist Game Style*/
 #gameField{
-  background-color: yellow;
-  width: 90%;
+  min-width: 750px;
+  max-width: calc(90% - 50px);
   height: calc(80% - 44px);
   position: relative;
   margin: auto;
@@ -75,6 +75,7 @@ von den halben Größen des Elternelements ab um das Element mittig zu positioni
   left: calc(50% - 100px);
   background-image: url('/webpics/Magic_button_blue.png');
   background-repeat: no-repeat;
+  background-size: 100%;
   background-position: center;
 }
 

@@ -6,95 +6,115 @@
 	<script src="jquery-3.2.0.min.js"></script>
   <script src="jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
   <script src="jquery.ui.touch-punch.min.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="jquery-ui-1.12.1.custom/jquery-ui.min.css">
 	<script>
-	$(document).ready(function () {
-		$(document).on('click', '#open', function (e) {
-	  	e.preventDefault();
-			var book = $('<div id="book"></div>');
-			if($('#elements').attr('data-bookState') == 'false'){
-				book.appendTo('#elements');
-				$('#elements').attr('data-bookState', 'true');
-				fillBook();
-			} else{
-				$('#book').remove();
-				$('#elements').attr('data-bookState', 'false');
-			}
-	  });
-	});
-	var fillBook = function () {
-		var ele = {};
-		var gametyp = '';
-		$.ajax({
-			url:'http://127.0.0.1:12345/book',
-			method:'get',
-		}).done(function (response) {
-			console.log('FillBook is called');
-			var img = '';
-			for(var i in response){
-				img = $('<img src="/bilder/'+response[i]+'.png">');
-				img.appendTo($('#book'));
-			}
-		}).fail(function (response) {
-			console.log('Error', arguments);
-		});
+
+	toastr.options = {
+		"positionClass": "toast-top-center",
 	}
-	$(document).on('click','#book img',function (e) {
-		e.preventDefault();
-		var ele = $(this).prop('src');
-		var name = '';
-		for(var i = 30; i < $(this).prop('src').length-4; i++){
-			name+=$(this).prop('src')[i];
+	$(document).on('click', '#open', function (e) {
+  	e.preventDefault();
+		var book = $('<div id="book"></div>');
+		if($('#elements').attr('data-bookState') == 'false'){
+			book.appendTo('#elements');
+			$('#elements').attr('data-bookState', 'true');
+			fillBook();
+		} else{
+			$('#book').remove();
+			$('#elements').attr('data-bookState', 'false');
 		}
-		var newEle = $('<img src="'+ele+'">');
-		newEle.attr('data-name', name);
-		newEle.draggable();
-		newEle.appendTo('#gameField');//How to append to mouse
+  });
+
+var fillBook = function () {
+	var ele = {};
+	var gametyp = '';
+	$.ajax({
+		url:'http://127.0.0.1:12345/book',
+		method:'get',
+	}).done(function (response) {
+		console.log('FillBook is called');
+		var img = '';
+		for(var i in response){
+			img = $('<img src="/bilder/'+response[i]+'.png">');
+			img.appendTo($('#book'));
+		}
+	}).fail(function (response) {
+		console.log('Error', arguments);
 	});
-	var ele = [];
-	var dragEle;
-	$(document).on('mouseup', '#cauldron', function(){
-		dragEle = $(this).children('img');
-		 ele = [];
-		$('#trash').droppable({
-			drop: function( event, ui ) {
-        dragEle.remove();
-      }
-		});
-	});
+}
+
+$(document).on('click','#book img',function (e) {
+	e.preventDefault();
+	var ele = $(this).prop('src');
+	var name = '';
+	for(var i = 30; i < $(this).prop('src').length-4; i++){
+		name+=$(this).prop('src')[i];
+	}
+	var newEle = $('<img src="'+ele+'">');
+	newEle.attr('data-name', name);
+	newEle.draggable();
+	newEle.appendTo('#gameField');//How to append to mouse
+});
+
+var elements = [];
+var dragEle;
+
 $( document ).ready( function() {
 	var doppedOnDropZone = false;
+	dragEle = $(this).children('img');
+	//console.log(dragEle);
+
+	$('#trash').droppable({
+		drop: function( event, ui ) {
+			ui.draggable[0].remove();
+			//dragEle.remove();
+
+		}
+	});
+
+
 	$('#cauldron').droppable({
 		drop: function( event, ui ) {
 			doppedOnDropZone = true;
 			console.log( 'DROPZONE', ui.draggable[0].dataset.name);
-			ele.push(ui.draggable[0].dataset.name);
-			console.log(ele);
+			elements.push(ui.draggable[0].dataset.name);
+			console.log(elements);
 			$.ajax({
 				url: 'http://127.0.0.1:12345/combine',
 				method:'post',
 				data: {
-					elements: ele
+					elements: elements
 				}
 			}).done(function (response) {
 				console.log(response);
-				$('#elements').attr('data-bookState', 'false');
-				$('#book').remove();
-				fillBook();
-				ele = [];
-				for(var i = 0; i <= $('#gameField').children('img').length; i++){
-						$('#gameField').children('img').remove();
-				}//End for
+				if(response == false){
+					$('#gameField').children('img').remove();
+					toastr.error("Diese Elemente ergaben nichts. Versuche es nochmal");
+					elements = [];
+				} else {
+					toastr.success("Das Element " + response + " wurde deinem magischem Buch hinzugefügt");
+					$('#elements').attr('data-bookState', 'false');
+					$('#book').remove();
+					fillBook();
+					elements = [];
+
+					for(var i = 0; i <= $('#gameField').children('img').length; i++){
+							$('#gameField').children('img').remove();
+					}//End for
+				}
 				$.ajax({
 					url: 'http://127.0.0.1:12345/update',
 					method:'post',
 					data: {
 						result: response
 					}
-				}).done(function (response) {
+				}).done(function (res) {
 						console.log('Datei upgedated!');
-				}).fail(function (response) {
+						console.log(response);
+				}).fail(function (res) {
 					console.log('Error', arguments);
 				});
 			}).fail(function (response) {
@@ -102,6 +122,7 @@ $( document ).ready( function() {
 			});
 		}//End drop
 	});//End dropable
+
 	$('#gameField').droppable({
 		drop: function( event, ui ) {
 			if ( doppedOnDropZone ) {
@@ -109,13 +130,15 @@ $( document ).ready( function() {
 				return;
 			}
 			console.log(  ui.draggable[0].dataset.name);
-			for( var i in ele ){
-				if ( ele[i] == ui.draggable[0].dataset.name ) {
-						ele.splice(i,1);
+			for( var i in elements){
+				if ( elements[i] == ui.draggable[0].dataset.name ) {
+						elements.splice(i,1);
 				}
 			}
-		}});
+		}
+	});
 });
+
 	</script>
 </head>
 <body id="gameHTML">
