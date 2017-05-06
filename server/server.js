@@ -214,7 +214,6 @@ app.post('/update', function(req, res) {
       if(isThere == true){
           game.game[0].results.push(req.body.result);
         }
-        //fs.writeFile('../savegame.json', JSON.stringify(game));
       }
   });
 });
