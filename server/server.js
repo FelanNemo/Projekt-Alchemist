@@ -2,8 +2,6 @@ var fs = require('fs');
 var express = require('express');
 var bp = require('body-parser');
 
-var path = require('path');
-
 var app = express();
 
 var server = app.listen(12345, function() {
@@ -42,6 +40,10 @@ for(var i in files){
 };
 
 /*---Getrequest---*/
+/*
+Get Button liest die savegame.json Datei und liefert also Response ture oder false,
+ture wenn die Datei vorhanden ist, false wenn nicht
+*/
 app.get('/button', function (req, res) {
   fs.readFile('../savegame.json', function (err) {
     if(!err){
@@ -56,10 +58,14 @@ app.get('/button', function (req, res) {
   });
 });
 
+/*
+Get Gametyp liest die games.json, wenn die Datei vorhanden ist wird in der Datei
+der Gametyp Tag gesucht und die Daten des Tags in einem Array gespeichert.
+Dieses Array wird als Antwort zurück geschickt.
+*/
 app.get('/gametype', function (req, res) {
   fs.readFile('../res/games.json', function (err, data) {
     if(!err){
-      //res.writeHead(200,{'Content-Type':'text/html'});
       console.log('Datei gefunden!');
       var games = JSON.parse(data);
       var sendData = [];
@@ -77,6 +83,8 @@ app.get('/gametype', function (req, res) {
   });
 });
 
+/*
+*/
 app.get('/book', function (req, res) {
   fs.readFile('../savegame.json', function (err, data) {
     if(!err){
@@ -89,7 +97,6 @@ app.get('/book', function (req, res) {
         sendData.push(games.game[i].results[j]);
       }
       res.send(sendData);
-
     } else {
       console.log('Datei nicht gefunden');
       res.writeHead(200,{'Content-Type':'application/json'});
@@ -105,40 +112,32 @@ app.post('/combine', function (req, res) {
     if(!err){
         var game = JSON.parse(data);
         var gametyp = game.game[0].gametype;
-        var tempi = [];
+        var tempi = '';
 
         fs.readFile('../res/games.json', function (err2, data2) {
           if(!err2){
             var temp = JSON.parse(data2);
-            
+
             for( var i in game.game){
               if(gametyp == temp.game[i].gametyp){
                 for(var j = 4; j < temp.game[i].combinations.length; j++){
+                  gefunden = 0;
                   for(var l in req.body.elements){
-                    //console.log(req.body.elements[l]);
                     for(var k in temp.game[i].combinations[j].elements){
-                    //console.log(temp.game[i].combinations[j].elements[k]);
                       if(req.body.elements[l] == temp.game[i].combinations[j].elements[k] ){
-                        tempi.push(temp.game[i].combinations[j]);
-                        //console.log('Tempi: ' + tempi);
+                        gefunden++;
                       }
                     }//End for k
                   }//End for l
+                  if ( gefunden == 2 ) {
+                    tempi = temp.game[i].combinations[j].result;
+                    console.log( 'gefunden in ' + j );
+                  }
                 }//End for j
               }//End if
             }//End for i
 
-            for(var i = 0; i < (tempi.length-1); i++ ){
-              var ele0 = tempi[i];
-
-              for(var j = (i+1); j < tempi.length; j++){
-                if(ele0 == tempi[j]){
-                  console.log(tempi[j].result);
-                  res.send(tempi[j].result)
-                  break;
-                }//End if
-              }//End for j
-            }//End for i
+            if ( tempi != '' )   res.send(tempi);
 
             console.log('Found game.json -----------------------');
           } else {
@@ -148,47 +147,71 @@ app.post('/combine', function (req, res) {
     } else {
       console.log('Datei nicht gefunden');
       res.end(JSON.stringify({file: false}));
-    }//End else
-  });//End readFile SaveJSON
-});//En app.det COMBINE
+    }
+  });
+});
 
+/*
+Post Save liest die Datei savegame.json, wenn die Datei nicht vorhanden ist,
+wird diese erstellt, ist sie vorhanden wird diese überschrieben, dadurch kann nur ein
+Spiel gespeichert werden
+*/
 app.post('/save', function (req, res) {
   fs.readFile('../savegame.json', function (err, data) {
     if(!err){
       try {
-        var game = req.body;
+        var game = {game:[]};
+        game.game.push(req.body);
+        fs.readFile('../res/games.json',function(err2,data2) {
+          var temp = JSON.parse(data2);
+          if(!err2){
+            for(var i in temp.game){
+              if(req.body.gametype == temp.game[i].gametyp){
+                for(var j = 0; j<4; j++){
+                  game.game[i].results.push(temp.game[i].combinations[j].result)
+                }
+                fs.writeFile('../savegame.json', JSON.stringify(game));
+                console.log('Datei erstellt');
+                res.writeHead(200,{'Content-Type':'application/json'});
+                res.end(JSON.stringify({saved: true}));
+              }
+            }
+          }
+        });
+        /*var game = req.body;
         fs.writeFile('../savegame.json', JSON.stringify(game));
         console.log('Datei gefunden');
         res.writeHead(200,{'Content-Type':'application/json'});
-        res.end(JSON.stringify({saved: true}))
+        res.end(JSON.stringify({saved: true}))*/
       } catch (err){
         res.writeHead(500,{'Content-Type':'text/html'});
         res.end('File corrupted');
       }
     } else {
-          var game = {game:[]};
-          game.game.push(req.body);
-          fs.readFile('../res/games.json',function(err2,data2) {
-            var temp = JSON.parse(data2);
-            if(!err2){
-
-              for(var i in temp.game){
-                if(req.body.gametype == temp.game[i].gametyp){
-                  for(var j = 0; j<4; j++){
-                    game.game[i].results.push(temp.game[i].combinations[j].result)
-                  }
-                  fs.writeFile('../savegame.json', JSON.stringify(game));
-                  console.log('Datei erstellt');
-                  res.writeHead(200,{'Content-Type':'application/json'});
-                  res.end(JSON.stringify({saved: true}));
+        var game = {game:[]};
+        game.game.push(req.body);
+        fs.readFile('../res/games.json',function(err2,data2) {
+          var temp = JSON.parse(data2);
+          if(!err2){
+            for(var i in temp.game){
+              if(req.body.gametype == temp.game[i].gametyp){
+                for(var j = 0; j<4; j++){
+                  game.game[i].results.push(temp.game[i].combinations[j].result)
                 }
+                fs.writeFile('../savegame.json', JSON.stringify(game));
+                console.log('Datei erstellt');
+                res.writeHead(200,{'Content-Type':'application/json'});
+                res.end(JSON.stringify({saved: true}));
               }
             }
-          });
+          }
+        });
       }
   });
 });
 
+/*
+*/
 app.post('/update', function(req, res) {
   fs.readFile('../savegame.json', function (err, data) {
     if(!err){
@@ -208,6 +231,10 @@ app.post('/update', function(req, res) {
   });
 });
 
+/*
+Post Select liest die Datei games.json aus und liefert ein Objekt mit allen
+Ergebnissen zu einem übertragen Gametyp zurück
+*/
 app.post('/select', function(req, res){
   fs.readFile('../res/games.json', function (err, data) {
     if(!err){
@@ -215,24 +242,23 @@ app.post('/select', function(req, res){
 
       var games = JSON.parse(data);
       console.log('Datei gefunden');
-      //console.log(req.body.gametyp);
 
-        for(var i in games.game){
-          if(games.game[i].gametyp == req.body.gametyp){
-            for(var j in games.game[i].combinations){
-              sendData.push(games.game[i].combinations[j].result);
-            }//End for
-          }//End if
-        }//End for
-        res.send(sendData);
-        //console.log(sendData);
-    }//End if(!err)
+      for(var i in games.game){
+        if(games.game[i].gametyp == req.body.gametyp){
+          for(var j in games.game[i].combinations){
+            sendData.push(games.game[i].combinations[j].result);
+          }
+        }
+      }
+      res.send(sendData);
+    }
   });
-});//End app.pos Select
+});
 
+/*
+Post AddEle liest games.json, und updated sie
+*/
 app.post('/addEle', function(req, res) {
-  //console.log(req.body);
-
   var input = req.body;
 
   fs.readFile('../res/games.json', function (err, data) {
@@ -240,29 +266,33 @@ app.post('/addEle', function(req, res) {
         var games = JSON.parse(data);
 
         var arr = input.elements;
-        var index = arr.indexOf('empty')
+        var newGame = input.newGametyp;
+        var index = arr.indexOf('empty');
+        var g = [];
 
         if(index > -1){
           arr.splice(index,1);
         }
 
-        var g = [];
         for(var i in games.game){
           g.push(games.game[i].gametyp);
         }
 
-        for(var i in g){
-          if(g[i] == input.gametyp){
-            games.game[i].combinations.push({"result":input.result,"elements":arr,"bild":"bilder/"+input.bildName})
-            fs.writeFile('../res/games.json', JSON.stringify(games));
-              console.log(games.game[i].combinations);
-              break;
-          }//End of if(g[i] == input.gametyp)
-        }//End of for(var i in g)
-
-        console.log('Datei gefunden');
-        res.writeHead(200,{'Content-Type':'application/json'});
-        res.end(JSON.stringify({saved: true}))
+        if(newGame != ''){
+          games.game.push({"gametyp":newGame,"combinations":[{"result":input.result,"elements":arr,"bild":"bilder/"+input.bildName}]});
+          fs.writeFile('../res/games.json', JSON.stringify(games));
+        } else{
+          for(var i in g){
+            if(g[i] == input.gametyp){
+              games.game[i].combinations.push({"result":input.result,"elements":arr,"bild":"bilder/"+input.bildName})
+              fs.writeFile('../res/games.json', JSON.stringify(games));
+                break;
+            }//End of if(g[i] == input.gametyp)
+          }//End of for(var i in g)
+          console.log('Datei gefunden');
+          res.writeHead(200,{'Content-Type':'application/json'});
+          res.end(JSON.stringify({saved: true}))
+        }
     } else {
           var game = {game:[]};
           game.game.push(req.body);

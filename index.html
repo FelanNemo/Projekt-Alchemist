@@ -6,52 +6,51 @@
 	<script src="jquery-3.2.0.min.js"></script>
 	<link rel="stylesheet" href="style.css">
 	<script>
-	//just so
-	//$('#countinueGame').attr({ 'disabled':'disabled'});
-
-	//Ist ein Savegame vorhanden?
-	//Wie frage ich hier ab ob savegame vorhanden ist????
+	/*
+	Ajax Request zum abfragen ob der Button "Spiel laden" aktive sein darf.
+	Ist kein savegame.json vorhanden muss der button Spielladen ausgegraut sein.
+	Der Request ist ein Getrequest, da einfach nur abgefragt wird ob die Datei vorhanden ist.
+	Als Antwort erhält der Request true oder false; ture wenn die Datei vorhanden ist, false wenn nicht
+	*/
 	$.ajax({
 	url:'http://127.0.0.1:12345/button',
-	method:'GET',
-	data: {}
-}).done( function(res){
-			console.log(res);
+	method:'GET'
+	}).done( function(res){
 			if(res.file == true){
-				console.log('Weiterspielen darf aktive sein');
 				$('#countinueGame').prop('disabled',false);
 			} else{
-			console.log('Weiterspielen muss deaktiviert sein');
 			$('#countinueGame').prop('disabled',true);
 			}
-}).fail(function(response) {
-		console.log('Wir landen im Errorzweig des Ajaxs', arguments);
+	}).fail(function(response) {
+		console.log('Error: ', arguments);
 	});
 
+	/*
+	In Document on ready werden die beiden Button auf die gleiche Breite gebracht
+	var w ist die Breite des Button "Neues Spiel" + padding*2(20px*2) + border*2(1*2px)
+	*/
 	$(document).ready(function(){
-		//w ist die Width des button
-		var w = $('#newGame').width() + 42*1;//42 = padding*2 + border*2
+		var w = $('#newGame').width() + 42*1;
 		$('form').css({'width': w});
 		$('button').css({'width': w});
-
 	});
 
-
+	/*
+	Die Buttons sind in einem Fom Tag dadurch muss bei sumbmit genauso wie bei dem Klick verhindert werden
+	dass sie sich wie normal verhalten.
+	Auf den Klick zum jeweiligen Button kommt man entweder zum user oder zum game
+	*/
 	$(document).on('submit','#game', function(e){
 		e.preventDefault();
 
-		$(document).on('click', 'button', function(e){
+		$(document).on('click', '#newGame', function(e){
 			e.preventDefault();
-			var name = $(this).attr('id');
-			if(name == 'newGame'){
-				//go to User and "start" Server
-				console.log('Neues Spiel');
-				location.href ='user'
-			}
-			if(name == 'countinueGame'){
-				//go to game and load elements
-				console.log('Spiele Weiter');
-			}
+			window.location.href='http://127.0.0.1:12345/user';
+		});
+
+		$(document).on('click', '#countinueGame',function(e) {
+			e.preventDefault();
+			window.location.href='http://127.0.0.1:12345/game';
 		});
 	});
 

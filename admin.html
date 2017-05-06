@@ -6,17 +6,28 @@
 	<script src="jquery-3.2.0.min.js"></script>
   <link rel="stylesheet" href="style.css">
 	<script>
-
+	/*
+	Globale Variable der Optionen da diese Variable in unterschiedlichen Request benötigt wird
+	*/
 	var opt = [];
 
+	/*
+	Bei On Click auf den Button "Speocher Element" wird die Standard Funktion verhindert,
+	außerdem werden die Values der einzelnen Felder gespeichert.
+	Im Ersten for werden alle Selects der ID Number gezählt und in ein Array gespeichert.
+
+	Auf den Klickt erfolt ein Ajax Request um die gespeicherten Daten zu übermitteln.
+	Durch die Daten Übermittlung ist der Request ein Postrequest.
+	Als Antwort erhält der Request ob die Daten gespeichert wurden oder nicht
+	*/
 	$(document).on( 'click', '#saveEle', function(e) {
 		e.preventDefault();
 
 		var gametyp = $('#gametype').val();
 		var name = $('#name').val();
-
-		//Elemente speichern
+		var newGametyp = $('#gameName input').val();
 		var elements = [];
+
 		for(var i  = 0; i < $('#number select').length; i++){
 			var element = $('#number select').get(i).value;
 			elements.push(element);
@@ -27,30 +38,42 @@
 			method:'post',
 			data: {
 				gametyp: gametyp,
+				newGametyp: newGametyp,
 				result: name,
 				elements: elements,
-				bildName: name+'.png',
-
+				bildName: name +'.png',
 			}
 		}).done(function (response) {
-				console.log('Send Request');
-
+				console.log(response);
 		}).fail(function (response) {
 			console.log('Error', arguments);
 		});
-
-
 	});
 
+	/*
+	Bei On Change wird ein Element mit der ID number ein und ausgeblendet
+	und je nach Gametyp die Optionen sich anpassen
+	*/
 	$(document).on('change','#gametype', function(e){
 		e.preventDefault();
- 		for(var i in $('#number option')){
-			$('#number option').remove();
+
+		if($(this).val()== "new"){
+				$('#gameName').show();
+		} else{
+			$('#gameName').hide();
+			for(var i in $('#number option')){
+				$('#number option').remove();
+			}
+			sel($('#element'));
+			console.log($('#number').children.length*1);
 		}
-		sel($('#element'));
-		console.log($('#number').children.length*1);
+
+
 	});
 
+	/*
+	Bei On Change wird ein Element mit der ID number ein und ausgeblendet
+	*/
 	$(document).on('change', '#eletyp', function(e){
 		e.preventDefault();
 
@@ -61,9 +84,20 @@
 		}
 	});
 
+	/*
+	Bei diesem On Change werden die Selects des Span mit der ID number erzeugt,
+	var id soll den neuen Selects eine eindeutige ID zuweisen, diese ist eine Nummer
+	dadurch das es sich um eine length angabe handelt wird diese mit jedem Element
+	größer.
+
+	Die Selects erhalten ein Data Attribut "data-selected" dieser soll verhindern das nach dem ersten
+	ändern eines Selects immer neue Selects angefügt werden.
+	Ein neues Select wird an ID number angefügt das geänderte Select bekommt sein Data Attribut auf 1
+	gesetzt.
+	Es wird die sel Funktion mit der eindeutigen ID aufgerufen
+	*/
 	$(document).on('change', '#number select', function(e){
 			var id = $('#number').children('select').length*1;
-			console.log(id);
 
 			var sele = $('<select id="'+id+'" data-selected=0>')
 			if($(this).val() != 'empty' && $(this).attr('data-selected') == '0'){
@@ -73,6 +107,20 @@
 			sel($('#'+id));
 	});
 
+	/*
+	Funktion sel dient dazu Die Selcts für die Elemente zu erzeugen
+	Die Funktion speichert den Gewählten Gametyp eines vorhanden Spieles,
+	dieser Gespeicherte Typ wird an den Server gesendet.
+	Parameter: elementID -> ist die ID des Elements
+
+	Der Ajax Request ist ein Postrequest, da Daten übermittelt werden.
+	Als Antwort kommt ein Objekt das alle Resultate zu dem gewählten Gametyp des games.json
+	gespeichert hat.
+
+	Im Donezweig des Request wird durch diese Antworten durchgezählt und für eine jede
+	eine Option hinzugefügt, den Parameter der Funktion dient dazu dass die Optionen nur zu
+	einem Select hinzugefügt werden
+	*/
 	var sel = function (elementID) {
 		var gametyp = $('#gametype').val();
 
@@ -99,6 +147,14 @@
 		});
 	}
 
+	/*
+	Ajax Request zum abfragen wieviele Option das Select hat, da im games.json mehr als
+	ein Alchemist Game gespeichert sein kann
+	Der Request ist ein Getrequest, da einfach nur die Gametypen des games.json zurück kommen.
+	Als Antwort kommt ein Objekt mit den Gametypen zurück, diese werden in der for Schleife
+	des Donezweigs durch gezählt und für ein jeden Gametyp wird eine Option an das selct angehängt.
+	Die Optionen bekommen den Value und Text aus der Antwort zum jeweiligen i
+	*/
 	$.ajax({
 		url:'http://127.0.0.1:12345/gametype',
 		method:'get',
@@ -114,12 +170,16 @@
 		console.log('Error', arguments);
 	});
 
+	/*
+	On Ready bringe alle Elemente auf die gleiche Breite
+	*/
 	$(document).ready(function(){
-		//w ist die Width des button
 		$('#number').hide();
-		var w = $('#username').width() + 170 ;
+		var w = $('#name').width() + 170 ;
 		$('form').css({'width': w});
 		$('#saveEle').css({'width': w});
+		$('input').css({'width':'63%'})
+		$('select').css({'width':'69%'});
 	});
 	</script>
 </head>
@@ -128,8 +188,8 @@
     <br>Gametype: <select id="gametype">
       <option value="new"> Neuen Spieltyp erstellen</option>
 		</select>
-		<br>Elementname:<input id="name" placeholder="Feuer"></input>
-    <br>Element Bild: <input id="pic" type="file"></input>
+		<br><span id="gameName">Gamename: <input  placeholder="Technik"></input></span>
+		<br>Elementname: <input id="name" placeholder="Feuer"></input>
     <br>Elementtyp: <select id="eletyp">
       <option value="start"> Start Element </option>
       <option value="combination"> Kombinationselement </option>
@@ -137,11 +197,10 @@
 
 		<span id="number">
 			<select id="element" data-selected="0">
-
-			</select>
+		</select>
 
 		</span>
-		<br><button id="saveEle">Start Game </button>
+		<br><button id="saveEle">Speicher Element</button>
 	</form>
 </body>
 </html>

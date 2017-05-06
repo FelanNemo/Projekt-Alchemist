@@ -9,12 +9,9 @@
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="jquery-ui-1.12.1.custom/jquery-ui.min.css">
 	<script>
-
 	$(document).ready(function () {
-
 		$(document).on('click', '#open', function (e) {
 	  	e.preventDefault();
-
 			var book = $('<div id="book"></div>');
 			if($('#elements').attr('data-bookState') == 'false'){
 				book.appendTo('#elements');
@@ -25,97 +22,100 @@
 				$('#elements').attr('data-bookState', 'false');
 			}
 	  });
-
 	});
-
 	var fillBook = function () {
 		var ele = {};
 		var gametyp = '';
-
 		$.ajax({
 			url:'http://127.0.0.1:12345/book',
 			method:'get',
 		}).done(function (response) {
 			console.log('FillBook is called');
 			var img = '';
-
 			for(var i in response){
 				img = $('<img src="/bilder/'+response[i]+'.png">');
 				img.appendTo($('#book'));
 			}
-
 		}).fail(function (response) {
 			console.log('Error', arguments);
 		});
 	}
-
 	$(document).on('click','#book img',function (e) {
 		e.preventDefault();
 		var ele = $(this).prop('src');
 		var name = '';
-
 		for(var i = 30; i < $(this).prop('src').length-4; i++){
 			name+=$(this).prop('src')[i];
 		}
-
 		var newEle = $('<img src="'+ele+'">');
 		newEle.attr('data-name', name);
 		newEle.draggable();
-		newEle.appendTo('#cauldron');//How to append to mouse
+		newEle.appendTo('#gameField');//How to append to mouse
 	});
-
+	var ele = [];
+	var dragEle;
 	$(document).on('mouseup', '#cauldron', function(){
-		var dragEle = $(this).children('img');
-		var ele = [];
-
-		$('#cauldron').droppable({
-      drop: function( event, ui ) {
-				for(var i = 0; i < $('#cauldron').children('img').length; i++){
-						ele.push(dragEle[i].dataset.name);
-				}//End for
-				console.log(ele);
-				$.ajax({
-					url: 'http://127.0.0.1:12345/combine',
-					method:'post',
-					data: {
-						elements: ele
-					}
-				}).done(function (response) {
-					console.log(response);
-					//var img = $('<img src=/bilder/'+response+'.png>');
-					//console.log(img.prop('src'));
-					//img.appendTo('#book');
-					$('#book').remove();
-					fillBook();
-
-					dragEle.remove();
-
-					$.ajax({
-						url: 'http://127.0.0.1:12345/update',
-						method:'post',
-						data: {
-							result: response
-						}
-					}).done(function (response) {
-
-					}).fail(function (response) {
-						console.log('Error', arguments);
-					});
-
-				}).fail(function (response) {
-					console.log('Error', arguments);
-				});
-      }//End drop
-		});//End dropable
-
+		dragEle = $(this).children('img');
+		 ele = [];
 		$('#trash').droppable({
 			drop: function( event, ui ) {
         dragEle.remove();
       }//end drop
 		});//End droppable
 	});
-
-
+$( document ).ready( function() {
+	var doppedOnDropZone = false;
+	$('#cauldron').droppable({
+		drop: function( event, ui ) {
+			doppedOnDropZone = true;
+			console.log( 'DROPZONE', ui.draggable[0].dataset.name);
+			ele.push(ui.draggable[0].dataset.name);
+			console.log(ele);
+			$.ajax({
+				url: 'http://127.0.0.1:12345/combine',
+				method:'post',
+				data: {
+					elements: ele
+				}
+			}).done(function (response) {
+				console.log(response);
+				$('#elements').attr('data-bookState', 'false');
+				$('#book').remove();
+				fillBook();
+				ele = [];
+				for(var i = 0; i <= $('#gameField').children('img').length; i++){
+						$('#gameField').children('img').remove();
+				}//End for
+				$.ajax({
+					url: 'http://127.0.0.1:12345/update',
+					method:'post',
+					data: {
+						result: response
+					}
+				}).done(function (response) {
+						console.log('Datei upgedated!');
+				}).fail(function (response) {
+					console.log('Error', arguments);
+				});
+			}).fail(function (response) {
+				console.log('Error', arguments);
+			});
+		}//End drop
+	});//End dropable
+	$('#gameField').droppable({
+		drop: function( event, ui ) {
+			if ( doppedOnDropZone ) {
+				doppedOnDropZone = false;
+				return;
+			}
+			console.log(  ui.draggable[0].dataset.name);
+			for( var i in ele ){
+				if ( ele[i] == ui.draggable[0].dataset.name ) {
+						ele.splice(i,1);
+				}
+			}
+		}});
+});
 	</script>
 </head>
 <body id="gameHTML">

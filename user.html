@@ -6,14 +6,21 @@
 	<script src="jquery-3.2.0.min.js"></script>
   <link rel="stylesheet" href="style.css">
 	<script>
+	/*
+	Bei On Klick auf den Button "Start Game" wird die Standard Funktion verhindert,
+	außerdem werden der Value von Username und Gametyp gespeichert.
+
+	Auf den Klick erfolgt ein Ajax Request um die gepeichtern Daten an den Servre zu senden.
+	Der Request is ein Postrequest, da Username und Gametyp an den Server übermittelt werden wollen.
+	Dieser Request soll allerdings nur dann ausgeführt werden wenn im Username Field ein anderer
+	Value als leer vorhanden ist.
+	Als Antwort erhält der Request ob die Daten gespeichert werden konnten.
+	*/
 	$(document).on( 'click', '#startGame', function(e) {
 		e.preventDefault();
 		var name = $('#username').val();
 		var gametype= $('#gametype').val();
 		var eleArr = [];
-		//console.log(name);
-		//$('#username').val('');
-		//var results = [];
 
 		window.location.href='http://127.0.0.1:12345/game';
 
@@ -25,16 +32,11 @@
 				method:'POST',
 				data: {
 				name: name,
-				tutorial: false,
-				points: 0,
 				gametype: gametype,
 				results: [0]
 			}
 			}).done(function (response) {
-				try {
-					response = JSON.parse(response);
-				} catch (e){}
-
+				response = JSON.parse(response);
 				if(response.saved){
 					console.log('Datei erstellt');
 				} else{
@@ -46,10 +48,17 @@
 		}
 	});
 
+	/*
+	Ajax Request zum abfragen wieviele Option das Select hat, da im games.json mehr als
+	ein Alchemist Game gespeichert sein kann
+	Der Request ist ein Getrequest, da einfach nur die Gametypen des games.json zurück kommen.
+	Als Antwort kommt ein Objekt mit den Gametypen zurück, diese werden in der for Schleife
+	des Donezweigs durch gezählt und für ein jeden Gametyp wird eine Option an das selct angehängt.
+	Die Optionen bekommen den Value und Text aus der Antwort zum jeweiligen i
+	*/
 	$.ajax({
 		url:'http://127.0.0.1:12345/gametype',
-		method:'get',
-		data: {}
+		method:'GET'
 	}).done(function (response) {
 			console.log('Erzeugt die Options für die Gameauswahl');
 			for(var i in response) {
@@ -61,17 +70,21 @@
 		console.log('Error', arguments);
 	});
 
+	/*
+	On Ready bringe alle Elemente auf die gleiche Breite
+	*/
 	$(document).ready(function(){
-		//w ist die Width des button
-		var w = $('#username').width() + 100 ;
+		var w = $('#username').width() + 110 ;
 		$('form').css({'width': w});
 		$('button').css({'width': w});
+		$('input').css({'width':'69%'})
+		$('select').css({'width':'69%'});
 	});
 	</script>
 </head>
 <body>
 	<form id="player">
-		Username:<input id="username" placeholder="Please enter a Username"></input>
+		Username: <input id="username" placeholder="Please enter a Username"></input>
 		<br>Gametype: <select id="gametype">
 		</select>
 		<br><button id="startGame">Start Game </button>

@@ -3,67 +3,83 @@
   margin: 0;
 }
 
+html{
+  height: 100%;
+}
+
 body{
+  position: relative;
   font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
   width: 100%;
-  height: auto;
-  background-color: rgba(76,70,50,0.2);
+  height: 100%;
+  background-image: url('/webpics/alchemical-circle-transmutation-circle-201303-1920x1080.jpg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
 }
 
 a{
   text-decoration: none;
 }
 
-/*Index Style*/
-#game{
-    height: 400px;
-    margin: auto;
+input, select{
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+/*Bei calc in diesem fall nimmt man beim px die hälfte der größen des Elemnts und zieht es
+von den halben Größen des Elternelements ab um das Element mittig zu positionieren*/
+#game, #player, #admin{
+  height: 250px;
+  position: absolute;
+  top: calc(50% - 125px);
+  left: calc(50% - 160px);
+}
+
+#game button, #player button, #admin #saveEle{
+  background-color: rgba(255,255,255,0.5);
+  border: 1px solid black;
+  border-radius: 15px;
+  padding: 20px;
+  margin-top: 20px;
 }
 
 #game button{
-  background-color: rgba(255,255,255,0.5);
-  border: 1px solid black;
-  border-radius: 15px;
-  padding: 20px;
   font-size: 50px;
-  margin-top: 20px;
 }
 
-
-/*User Style*/
-#player{
-  height: 150px;
-  margin: auto;
-}
-
-#player button{
-  background-color: rgba(255,255,255,0.5);
-  border: 1px solid black;
-  border-radius: 15px;
-  padding: 20px;
+#player button, #admin #saveEle{
   font-size: 20px;
-  margin-top: 20px;
-}
-
-/*Admin Style*/
-#admin{
-  height: 200px;
-  margin: auto;
-}
-
-#admin #saveEle{
-  background-color: rgba(255,255,255,0.5);
-  border: 1px solid black;
-  border-radius: 15px;
-  padding: 20px;
-  font-size: 20px;
-  margin-top: 20px;
 }
 
 /*Game Style*/
-#elements, #menu, #trash{
+#gameField{
+  background-color: yellow;
+  width: 90%;
+  height: calc(80% - 44px);
   position: relative;
-  display: flex;
+  margin: auto;
+  top: 10%;
+  border: none;
+}
+
+#cauldron{
+  width: 200px;
+  height: 200px;
+  position: absolute;
+  top: calc(50% - 100px);
+  left: calc(50% - 100px);
+  background-image: url('/webpics/Magic_button_blue.png');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+#elements, #trash{
+  position: relative;
   float:left;
   min-width: 50px;
 }
@@ -72,12 +88,14 @@ a{
   margin: 0px 0 0 25px;
 }
 
-#menu img, #trash img{
+#trash img{
   height: 44px;
   width: 44px;
   border: 3px solid black;
   border-radius: 50%;
   padding:2px;
+  position: absolute;
+  left: calc(50% - 22px);
 }
 
 #elements img{
@@ -97,29 +115,10 @@ a{
   float: right;
 }
 
-#menu ul{
-  display: none;
-}
-
-#gameField{
-  background-color: yellow;
-  width: 90%;
-  height: 500px;
-  margin: 25px auto 0 auto;
-  border: none;
-}
-
-#cauldron{
-  width: 150px;
-  height: 150px;
-  margin: auto;
-  background-color: blue;
-}
-
 #trash{
+  clear: both;
   width: 100%;
-}
-
-#trash img{
-  margin: 10px 50% 15px 50%;
+  height: 54px;
+  position: absolute;
+  top: calc(90% - 22px);
 }
