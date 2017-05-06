@@ -121,23 +121,59 @@ app.post('/combine', function (req, res) {
             for( var i in game.game){
               if(gametyp == temp.game[i].gametyp){
                 for(var j = 4; j < temp.game[i].combinations.length; j++){
+<<<<<<< HEAD
+
+=======
+>>>>>>> Does It Work?
                   gefunden = 0;
                   for(var l in req.body.elements){
                     for(var k in temp.game[i].combinations[j].elements){
                       if(req.body.elements[l] == temp.game[i].combinations[j].elements[k] ){
+<<<<<<< HEAD
+                        //tempi.push(temp.game[i].combinations[j]);
+
+                        gefunden++;
+
+                        //console.log('Tempi: ' + tempi);
+                      }
+                    }//End for k
+                  }//End for l
+
+=======
                         gefunden++;
                       }
                     }//End for k
                   }//End for l
+>>>>>>> Does It Work?
                   if ( gefunden == 2 ) {
                     tempi = temp.game[i].combinations[j].result;
                     console.log( 'gefunden in ' + j );
                   }
+<<<<<<< HEAD
+
+=======
+>>>>>>> Does It Work?
                 }//End for j
               }//End if
             }//End for i
 
+<<<<<<< HEAD
+            if ( tempi != '' )   res.send(tempi)
+
+          /*  for(var i = 0; i < (tempi.length-1); i++ ){
+              var ele0 = tempi[i];
+
+              for(var j = (i+1); j < tempi.length; j++){
+                if(ele0 == tempi[j]){
+                  console.log(tempi[j].result);
+                  res.send(tempi[j].result)
+                  break;
+                }//End if
+              }//End for j
+            }//End for i*/
+=======
             if ( tempi != '' )   res.send(tempi);
+>>>>>>> Does It Work?
 
             console.log('Found game.json -----------------------');
           } else {
