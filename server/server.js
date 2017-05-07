@@ -1,17 +1,26 @@
+/*
+Require bedeutet dass Node Module benötigt werden, express und body-parser
+müssen in der Konsole über npm install "Modul" istalliert werden
+*/
 var fs = require('fs');
 var express = require('express');
 var bp = require('body-parser');
 
-var path = require('path');
-
 var app = express();
 
+/*
+Definiert den Server;
+Parameter: "12345" -> eine belibige Zahl auf die port als Port hört
+host -> in diesem Fall ist der localhost, auf einem Server wäre es dessen Addresse
+port -> definiert den Poet auf den gehört wird
+*/
 var server = app.listen(12345, function() {
   var host = server.address().address;
   var port = server.address().port;
   console.log('Server listen http//%s:%s', host, port);
 });
 
+//Speichert Request mit den zugehörigen HTML Seiten
 var files = [
   {req:'/', file:'../index.html'},
   {req:'/user', file:'../user.html'},
@@ -19,9 +28,16 @@ var files = [
   {req:'/game', file:'../game.html'}
 ];
 
+
+//Einstellung für den body-parser
 app.use(bp.urlencoded({extended:true}));
+
 app.use(express.static('../res'));
 
+/*
+Zählt durch das Seiten Array files durch und liefert die angeforderte Seite,
+wenn der Request im files Array definiert ist
+*/
 for(var i in files){
   (function (i) {
     app.get(files[i].req, function( req, res) {
@@ -41,7 +57,11 @@ for(var i in files){
   })(i);
 };
 
-/*---Getrequest---*/
+//---Getrequest---
+/*
+Get Button liest die savegame.json Datei und liefert also Response ture oder false,
+ture wenn die Datei vorhanden ist, false wenn nicht
+*/
 app.get('/button', function (req, res) {
   fs.readFile('../savegame.json', function (err) {
     if(!err){
@@ -56,10 +76,14 @@ app.get('/button', function (req, res) {
   });
 });
 
+/*
+Get Gametyp liest die games.json Datei, wenn die Datei vorhanden ist wird in der Datei
+der Gametyp Tag gesucht und die Daten des Tags in einem Array gespeichert.
+Dieses Array wird als Antwort zurück geschickt.
+*/
 app.get('/gametype', function (req, res) {
   fs.readFile('../res/games.json', function (err, data) {
     if(!err){
-      //res.writeHead(200,{'Content-Type':'text/html'});
       console.log('Datei gefunden!');
       var games = JSON.parse(data);
       var sendData = [];
@@ -77,6 +101,10 @@ app.get('/gametype', function (req, res) {
   });
 });
 
+/*
+Get Book liest die savegame.json Dateiund liefert alle Elemente von results der Datei
+als ein Array zurück
+*/
 app.get('/book', function (req, res) {
   fs.readFile('../savegame.json', function (err, data) {
     if(!err){
@@ -99,7 +127,12 @@ app.get('/book', function (req, res) {
 });
 
 
-/*---Postrequest---*/
+//---Postrequest---
+/*
+Post Combine liest die games.json datei und vergleicht diese mit dem übertragenen
+Element Array, ist die Kombination der beiden Elemente im Array in der Datei vorhanden
+liefert diese das Resultat zurück, wenn nicht liefert sie false zurück
+*/
 app.post('/combine', function (req, res) {
   fs.readFile('../savegame.json', function (err, data) {
     if(!err){
@@ -126,8 +159,6 @@ app.post('/combine', function (req, res) {
                   if ( gefunden == 2 ) {
                     tempi = temp.game[i].combinations[j].result;
                     console.log( 'gefunden in ' + j );
-                    console.log( "Alle Gefundenen "+gefunden);
-                    console.log(tempi);
                     break;
                   }
                 }//End for j
@@ -140,9 +171,6 @@ app.post('/combine', function (req, res) {
 
             if((req.body.elements.length == 2) && (gefunden !=  2)){
               res.end(false);
-              console.log('tempi '+ tempi);
-              console.log('gefunden '+ gefunden);
-              console.log('Länge '+ req.body.elements.length);
             }
             console.log('Found game.json -----------------------');
           } else {
@@ -156,6 +184,11 @@ app.post('/combine', function (req, res) {
   });//End readFile SaveJSON
 });//En app.det COMBINE
 
+/*
+Post Save liest die Datei savegame.json, wenn die Datei nicht vorhanden ist,
+wird diese erstellt, ist sie vorhanden wird diese überschrieben, dadurch kann nur ein
+Spiel gespeichert werden
+*/
 app.post('/save', function (req, res) {
   fs.readFile('../savegame.json', function (err, data) {
     if(!err){
@@ -193,6 +226,11 @@ app.post('/save', function (req, res) {
   });
 });
 
+/*
+Post Update liest die davegame.json Datei und überprüft ob das übtertragene
+Element schon im savegame.json results Array vorhanden ist, wenn nicht wird das
+Element in Array gespeichert
+*/
 app.post('/update', function(req, res) {
   fs.readFile('../savegame.json', function (err, data) {
 
@@ -218,6 +256,10 @@ app.post('/update', function(req, res) {
   });
 });
 
+/*
+Post Select liest die Datei games.json aus und liefert ein Objekt mit allen
+Ergebnissen zu einem übertragen Gametyp zurück
+*/
 app.post('/select', function(req, res){
   fs.readFile('../res/games.json', function (err, data) {
     if(!err){
@@ -225,7 +267,6 @@ app.post('/select', function(req, res){
 
       var games = JSON.parse(data);
       console.log('Datei gefunden');
-      //console.log(req.body.gametyp);
 
         for(var i in games.game){
           if(games.game[i].gametyp == req.body.gametyp){
@@ -234,15 +275,12 @@ app.post('/select', function(req, res){
             }//End for
           }//End if
         }//End for
-        res.send(sendData);
-        //console.log(sendData);
     }//End if(!err)
   });
 });//End app.pos Select
 
+//Post AddEle liest games.json, und updated die Datei
 app.post('/addEle', function(req, res) {
-  //console.log(req.body);
-
   var input = req.body;
 
   fs.readFile('../res/games.json', function (err, data) {

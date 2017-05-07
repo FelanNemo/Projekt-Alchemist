@@ -11,10 +11,19 @@
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="jquery-ui-1.12.1.custom/jquery-ui.min.css">
 	<script>
+ 	//Glogabele Variablen
+	var elements = [];
+	var dragEle;
 
+	//Toastr ist ein Framework für Informationsboxen
 	toastr.options = {
 		"positionClass": "toast-top-center",
 	}
+
+	/*
+	Document on Klick mit der ID "open", öffnet und erzeugt das magische Buch
+	oder schließt und löscht das magische Buch
+	*/
 	$(document).on('click', '#open', function (e) {
   	e.preventDefault();
 		var book = $('<div id="book"></div>');
@@ -28,6 +37,11 @@
 		}
   });
 
+/*
+Fill Book, füllt das magischge Buch mit schon vorhanden Elementen
+Ajax Request zum abfargen der Elemente, wenn Elemente zurück kommen erzeuge
+die Bilder und füge diese zur ID "book" hinzu
+*/
 var fillBook = function () {
 	var ele = {};
 	var gametyp = '';
@@ -46,6 +60,12 @@ var fillBook = function () {
 	});
 }
 
+/*
+Hier wird bei einem Klick auf die Elemente eine Draggable Kopie an ID "gameField"
+angehäng, die Forschleife dient dazu aus dem img-Tag nur den Teil zwischen Addresse
+und. png zu bekommen, um dieses als Dataattribut für die kopierten Elemente verwenden
+zu können
+*/
 $(document).on('click','#book img',function (e) {
 	e.preventDefault();
 	var ele = $(this).prop('src');
@@ -59,14 +79,15 @@ $(document).on('click','#book img',function (e) {
 	newEle.appendTo('#gameField');//How to append to mouse
 });
 
-var elements = [];
-var dragEle;
 
 $( document ).ready( function() {
 	var doppedOnDropZone = false;
 	dragEle = $(this).children('img');
-	//console.log(dragEle);
 
+	/*
+	Der ID "trash" wird ein droppable hinzugefügt, wenn gedroppt wird soll das
+	betreffende Element gelöscht werden
+	*/
 	$('#trash').droppable({
 		drop: function( event, ui ) {
 			ui.draggable[0].remove();
@@ -75,53 +96,82 @@ $( document ).ready( function() {
 		}
 	});
 
+	/*
+	Der ID "cauldron" wird ein droppable hinzugefügt, in diesem dropable wird überprüft ob
+	das gedroppte Element schon im elements Array vorhanden ist wenn nicht wird das
+	elements Array an den Server gesendet.
 
+	Liefert der Server false zurück gibt das toastr ein Erro Infobox aus und setzt das
+	elements Array auf ein leeres Array und löscht die Elemente.
+	Bekommt das Ajax allerdings etwas anderes als false zurück gibt das toastr eine Success Infobox aus,
+	setzt das Dataattribut der ID "elements" auf false, removed die ID "book" und füllt diese neu und setzt
+	elementsauf ein leeres Array und löscht die Elemente.
+
+	Immer noch im Donezweig Ajax Request combine wird ein zweiter Ajax Request aufgerufen.
+	Dieser Ajax schickt die nicht false Antwort des Servers wieder zurück.
+
+	Der letzte else Zweig soll verhindern das zwei gleiche Elemente aufgerufen werden können,
+	in diesem fall ruft das toastr eine Error Infobox auf.
+	*/
 	$('#cauldron').droppable({
 		drop: function( event, ui ) {
 			doppedOnDropZone = true;
 			console.log( 'DROPZONE', ui.draggable[0].dataset.name);
-			elements.push(ui.draggable[0].dataset.name);
-			console.log(elements);
-			$.ajax({
-				url: 'http://127.0.0.1:12345/combine',
-				method:'post',
-				data: {
-					elements: elements
-				}
-			}).done(function (response) {
-				console.log(response);
-				if(response == false){
-					$('#gameField').children('img').remove();
-					toastr.error("Diese Elemente ergaben nichts. Versuche es nochmal");
-					elements = [];
-				} else {
-					toastr.success("Das Element " + response + " wurde deinem magischem Buch hinzugefügt");
-					$('#elements').attr('data-bookState', 'false');
-					$('#book').remove();
-					fillBook();
-					elements = [];
+			if(elements != ui.draggable[0].dataset.name){
+				elements.push(ui.draggable[0].dataset.name);
 
-					for(var i = 0; i <= $('#gameField').children('img').length; i++){
-							$('#gameField').children('img').remove();
-					}//End for
-				}
 				$.ajax({
-					url: 'http://127.0.0.1:12345/update',
+					url: 'http://127.0.0.1:12345/combine',
 					method:'post',
 					data: {
-						result: response
+						elements: elements
 					}
-				}).done(function (res) {
-						console.log('Datei upgedated!');
-				}).fail(function (res) {
+				}).done(function (response) {
+					console.log(response);
+					if(response == false){
+						$('#gameField').children('img').remove();
+						toastr.error("Diese Elemente ergaben nichts. Versuche es nochmal");
+						elements = [];
+					} else {
+						toastr.success("Das Element " + response + " wurde deinem magischem Buch hinzugefügt");
+						$('#elements').attr('data-bookState', 'false');
+						$('#book').remove();
+						fillBook();
+						elements = [];
+
+						for(var i = 0; i <= $('#gameField').children('img').length; i++){
+								$('#gameField').children('img').remove();
+						}//End for
+					}
+					$.ajax({
+						url: 'http://127.0.0.1:12345/update',
+						method:'post',
+						data: {
+							result: response
+						}
+					}).done(function (res) {
+							console.log('Datei upgedated!');
+					}).fail(function (res) {
+						console.log('Error', arguments);
+					});
+				}).fail(function (response) {
 					console.log('Error', arguments);
 				});
-			}).fail(function (response) {
-				console.log('Error', arguments);
-			});
+			} else{
+				toastr.error("Diese Elemente ergaben nichts. Versuche es nochmal");
+				for(var i = 0; i <= $('#gameField').children('img').length; i++){
+						$('#gameField').children('img').remove();
+				}//End for
+				elements = [];
+			}
+			console.log(elements);
 		}//End drop
 	});//End dropable
 
+	/*
+	Die ID "gameField" bekommt ein droppable, wenn in dieser ID ein Element gedroppt wird
+	wird es aus dem Elements Array gelöscht.
+	*/
 	$('#gameField').droppable({
 		drop: function( event, ui ) {
 			if ( doppedOnDropZone ) {
