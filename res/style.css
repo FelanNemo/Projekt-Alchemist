@@ -10,6 +10,9 @@ html{
 body{
   position: relative;
   font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+  font-weight: bold;
+  font-variant-caps: all-petite-caps;
+  color: rgba(78,117,163,1);
   width: 100%;
   height: 100%;
   background-image: url('/webpics/alchemical-circle-transmutation-circle-201303-1920x1080.jpg');
@@ -28,6 +31,23 @@ input, select{
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
+  background-color: rgba(78,117,163,0.6);
+  color: white;
+}
+
+::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    color:   #E8E8EE;
+}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+   color:    #E8E8EE;
+   opacity:  1;
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+   color:    #E8E8EE;
+   opacity:  1;
+}
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+   color:   #E8E8EE;
 }
 
 /*Bei calc in diesem fall nimmt man beim px die hälfte der größen des Elemnts und zieht es
@@ -40,8 +60,11 @@ von den halben Größen des Elternelements ab um das Element mittig zu positioni
 }
 
 #game button, #player button, #admin #saveEle{
-  background-color: rgba(255,255,255,0.5);
-  border: 1px solid black;
+  font-weight: bold;
+  font-variant-caps: all-petite-caps;
+  color: white;
+  background-color: rgba(0,176,240,0.7);
+  border: none;
   border-radius: 15px;
   padding: 20px;
   margin-top: 20px;
@@ -52,13 +75,12 @@ von den halben Größen des Elternelements ab um das Element mittig zu positioni
 }
 
 #player button, #admin #saveEle{
-  font-size: 20px;
+  font-size: 25px;
 }
 
 /*Alchemist Game Style*/
 #gameField{
-  min-width: 750px;
-  max-width: calc(90% - 50px);
+  max-width: calc(80% - 60px);
   height: calc(80% - 44px);
   position: relative;
   margin: auto;
@@ -81,10 +103,11 @@ von den halben Größen des Elternelements ab um das Element mittig zu positioni
 #elements, #trash{
   position: relative;
   float:left;
-  min-width: 50px;
+  min-width: 60px;
 }
 
 #elements{
+  width: 10%;
   margin: 0px 0 0 25px;
 }
 
@@ -104,10 +127,24 @@ von den halben Größen des Elternelements ab um das Element mittig zu positioni
   width: 50px;
 }
 
+#book::before{
+  background-image: url('/webpics/SchrifftrolleKopf.png');
+  height: 20px;
+}
+
 #book{
-  width: 10%;
+  width: 100%;
   min-width: 50px;
-  background-color: brown;
+  background-image: url('/webpics/SchriftrolleBody2.png');
+  background-repeat: repeat-y;
+  background-position: center;
+  background-size: auto;
+}
+
+#book img{
+  position: relative;
+  left: 10%;
+  padding-top: 5px;
 }
 
 #menu{

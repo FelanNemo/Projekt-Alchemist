@@ -192,21 +192,30 @@ Spiel gespeichert werden
 app.post('/save', function (req, res) {
   fs.readFile('../savegame.json', function (err, data) {
     if(!err){
-      try {
-        var game = req.body;
-        fs.writeFile('../savegame.json', JSON.stringify(game));
-        console.log('Datei gefunden');
-        res.writeHead(200,{'Content-Type':'application/json'});
-        res.end(JSON.stringify({saved: true}))
-      } catch (err){
-        res.writeHead(500,{'Content-Type':'text/html'});
-        res.end('File corrupted');
-      }
+      var game = {game:[]};
+      game.game.push(req.body);
+      fs.readFile('../res/games.json',function(err2,data2) {
+      var temp = JSON.parse(data2);
+        if(!err2){
+
+          for(var i in temp.game){
+            if(req.body.gametype == temp.game[i].gametyp){
+              for(var j = 0; j<4; j++){
+                game.game[i].results.push(temp.game[i].combinations[j].result)
+              }
+              fs.writeFile('../savegame.json', JSON.stringify(game));
+              console.log('Datei erstellt');
+              res.writeHead(200,{'Content-Type':'application/json'});
+              res.end(JSON.stringify({saved: true}));
+            }
+          }
+        }
+      });
     } else {
           var game = {game:[]};
           game.game.push(req.body);
           fs.readFile('../res/games.json',function(err2,data2) {
-            var temp = JSON.parse(data2);
+          var temp = JSON.parse(data2);
             if(!err2){
 
               for(var i in temp.game){
@@ -239,8 +248,8 @@ app.post('/update', function(req, res) {
 
     if(!err){
       if(req.body.result == false){
-        res.end(false);
-        console.log(req.body.result);
+        res.send(false);
+        console.log("1." + req.body.result);
       } else {
         for(var i in game.game[0].results){
           if(req.body.result == game.game[0].results[i])
@@ -250,8 +259,11 @@ app.post('/update', function(req, res) {
         }
 
       if(isThere == true){
+        console.log('PUSH');
           game.game[0].results.push(req.body.result);
+          console.log(game.game[0].results);
         }
+      fs.writeFile('../savegame.json', JSON.stringify(game));
       }
   });
 });
