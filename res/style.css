@@ -79,19 +79,33 @@ von den halben Größen des Elternelements ab um das Element mittig zu positioni
 }
 
 /*Alchemist Game Style*/
-#gameField{
-  max-width: calc(80% - 60px);
-  height: calc(80% - 44px);
+#gameWrapper{
+  max-height: 550px;
+  min-height: 350px;
+  max-width: 700px;
+  min-width: 500px;
   position: relative;
+  top: calc(50% - 175px);
+  left: calc(50% - 250px);
+  background-color: rgba(255, 255, 0, 0.1);
+
+}
+
+
+#gameField{
+  max-width: calc(75% - 60px);
+  height: calc(75% - 44px);
+  position: absolute;
   margin: auto;
   top: 10%;
+  left:calc(50% - 100px);
   border: none;
 }
 
 #cauldron{
   width: 200px;
   height: 200px;
-  position: absolute;
+  position: relative;
   top: calc(50% - 100px);
   left: calc(50% - 100px);
   background-image: url('/webpics/Magic_button_blue.png');
@@ -107,7 +121,7 @@ von den halben Größen des Elternelements ab um das Element mittig zu positioni
 }
 
 #elements{
-  width: 10%;
+  width: 25%;
   margin: 0px 0 0 25px;
 }
 
@@ -134,7 +148,6 @@ von den halben Größen des Elternelements ab um das Element mittig zu positioni
 
 #book{
   width: 100%;
-  min-width: 50px;
   background-image: url('/webpics/SchriftrolleBody2.png');
   background-repeat: repeat-y;
   background-position: center;
