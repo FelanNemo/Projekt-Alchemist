@@ -6,9 +6,7 @@
 	<script src="jquery-3.2.0.min.js"></script>
   <link rel="stylesheet" href="style.css">
 	<script>
-	/*
-	Globale Variable der Optionen da diese Variable in unterschiedlichen Request benötigt wird
-	*/
+	// Globale Variable der Optionen da diese Variable in unterschiedlichen Request benötigt wird
 	var opt = [];
 
 	/*
@@ -40,8 +38,7 @@
 				gametyp: gametyp,
 				newGametyp: newGametyp,
 				result: name,
-				elements: elements,
-				bildName: name +'.png',
+				elements: elements
 			}
 		}).done(function (response) {
 				console.log(response);
@@ -57,7 +54,7 @@
 	$(document).on('change','#gametype', function(e){
 		e.preventDefault();
 
-		if($(this).val()== "new"){
+		if($(this).val() == "new"){
 				$('#gameName').show();
 		} else{
 			$('#gameName').hide();
@@ -65,10 +62,7 @@
 				$('#number option').remove();
 			}
 			sel($('#element'));
-			console.log($('#number').children.length*1);
 		}
-
-
 	});
 
 	/*
@@ -100,10 +94,12 @@
 			var id = $('#number').children('select').length*1;
 
 			var sele = $('<select id="'+id+'" data-selected=0>')
+
 			if($(this).val() != 'empty' && $(this).attr('data-selected') == '0'){
 				sele.appendTo('#number');
 				$(this).attr('data-selected', '1');
 			}
+
 			sel($('#'+id));
 	});
 
@@ -170,9 +166,7 @@
 		console.log('Error', arguments);
 	});
 
-	/*
-	On Ready bringe alle Elemente auf die gleiche Breite
-	*/
+	//	On Ready bringe alle Elemente auf die gleiche Breite
 	$(document).ready(function(){
 		$('#number').hide();
 		var w = $('#name').width() + 170 ;
